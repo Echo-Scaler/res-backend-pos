@@ -142,7 +142,7 @@
     }
 
     .emp-table th {
-        background-color: rgba(15, 23, 42, 0.5);
+        background-color: var(--bg-hover);
         color: var(--text-muted);
         font-size: 0.8rem;
         font-weight: 700;
@@ -157,6 +157,7 @@
         border-bottom: 1px solid var(--border);
         font-size: 0.9rem;
         vertical-align: middle;
+        color: var(--text-main);
     }
 
     .emp-table tr:last-child td {
@@ -164,7 +165,7 @@
     }
 
     .emp-table tr:hover td {
-        background-color: rgba(255, 255, 255, 0.02);
+        background-color: var(--bg-hover);
     }
 
     .user-info {
@@ -177,19 +178,19 @@
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        background: linear-gradient(135deg, #334155, #1e293b);
+        background: var(--primary-light);
         border: 1px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 800;
-        color: var(--text-main);
+        color: var(--primary);
         font-size: 0.95rem;
     }
 
     .user-name-title {
         font-weight: 700;
-        color: #f8fafc;
+        color: var(--text-main);
         display: flex;
         align-items: center;
         gap: 0.4rem;
