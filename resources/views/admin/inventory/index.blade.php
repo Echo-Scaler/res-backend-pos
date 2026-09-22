@@ -176,9 +176,6 @@
                 <i class="ti ti-packages" style="color: #3b82f6;"></i>
                 Inventory & Stock Management
             </h1>
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 0.25rem;">
-                Track kitchen ingredients, raw material stock levels, units, and safety threshold alerts for <strong>{{ $restaurant->name ?? 'Restaurant' }}</strong>.
-            </p>
         </div>
         <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
             <a href="{{ route('admin.inventory.report') }}" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.65rem 1.15rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; display: inline-flex; align-items: center; gap: 0.45rem; text-decoration: none;">

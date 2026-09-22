@@ -274,7 +274,9 @@
                 <span>{{ $module['icon'] }}</span>
                 <span>{{ $module['title'] }}</span>
             </h1>
-            <p class="hero-desc">{{ $module['description'] }}</p>
+            @if(!empty($module['description']))
+                <p class="hero-desc">{{ $module['description'] }}</p>
+            @endif
         </div>
 
         <div>

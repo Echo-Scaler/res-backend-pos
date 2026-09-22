@@ -45,7 +45,7 @@ class AdminModuleController extends Controller
                 'title' => 'Restaurant Settings',
                 'icon' => '⚙️',
                 'category' => 'Administration & System',
-                'description' => 'Manage restaurant business profile, legal address, contact numbers, brand logo, and operating hours.',
+                'description' => '',
                 'features' => [
                     'Store Profile & Brand Logo',
                     'Contact Phone & Support Email',
@@ -93,7 +93,7 @@ class AdminModuleController extends Controller
                 'title' => 'Table Management',
                 'icon' => '🪑',
                 'category' => 'Core Operations',
-                'description' => 'Interactive dining floor plan, table numbers, seating capacity, QR code digital menus, and live table occupancy.',
+                'description' => '',
                 'features' => [
                     'Zone & Section Mapping (Indoor, Outdoor, VIP)',
                     'Live Table Status (Vacant, Occupied, Billed, Dirty)',
@@ -105,7 +105,7 @@ class AdminModuleController extends Controller
                 'title' => 'Order Management',
                 'icon' => '🧾',
                 'category' => 'Core Operations',
-                'description' => 'Live order monitoring, kitchen display system (KDS) tickets, split orders, item cancellations, and void approvals.',
+                'description' => '',
                 'features' => [
                     'Real-Time Kitchen Display System (KDS)',
                     'Split Bill & Merge Table Orders',
@@ -117,7 +117,7 @@ class AdminModuleController extends Controller
                 'title' => 'Payment Management',
                 'icon' => '💳',
                 'category' => 'Financials & Stock',
-                'description' => 'Cash drawer opening/closing sessions, WavePay & KBZPay QR settlements, credit card processing, and change calculations.',
+                'description' => '',
                 'features' => [
                     'Shift Cash Drawer Opening & Closing Reconciliation',
                     'Dynamic Myanmar QR Code Pay (KBZPay & WavePay)',
@@ -129,7 +129,7 @@ class AdminModuleController extends Controller
                 'title' => 'Customer Management',
                 'icon' => '👤',
                 'category' => 'Staff & Customers',
-                'description' => 'Loyalty rewards program, customer visit frequency, VIP dining tags, and order preferences history.',
+                'description' => '',
                 'features' => [
                     'Customer Dining Profile & Contact Book',
                     'Loyalty Points Accumulation & Redemption',
@@ -153,7 +153,7 @@ class AdminModuleController extends Controller
                 'title' => 'Reports & Analytics',
                 'icon' => '📈',
                 'category' => 'Financials & Stock',
-                'description' => 'Financial profit/loss statements, peak dining hour heatmaps, product velocity reports, and tax compliance records.',
+                'description' => '',
                 'features' => [
                     'Daily, Weekly & Monthly Gross / Net Revenue',
                     'Hourly Sales Heatmap & Turnaround Time',
@@ -165,7 +165,7 @@ class AdminModuleController extends Controller
                 'title' => 'Expense Management',
                 'icon' => '💰',
                 'category' => 'Financials & Stock',
-                'description' => 'Petty cash log, daily market ingredient purchasing costs, utility bills, and staff operational payouts.',
+                'description' => '',
                 'features' => [
                     'Daily Fresh Market Grocery Cash Outflow',
                     'Utility Bills (Electricity, Gas, Generator Fuel)',
@@ -177,7 +177,7 @@ class AdminModuleController extends Controller
                 'title' => 'Tax / Service Charge Settings',
                 'icon' => '📑',
                 'category' => 'Administration & System',
-                'description' => 'Configure Commercial Tax (e.g. 5%), Service Charge (e.g. 10%), inclusive/exclusive menu price calculations, and tax receipts.',
+                'description' => '',
                 'features' => [
                     'Government Commercial Tax Configuration',
                     'Dining Service Charge Percentage',
@@ -189,7 +189,7 @@ class AdminModuleController extends Controller
                 'title' => 'Business Settings',
                 'icon' => '🏢',
                 'category' => 'Administration & System',
-                'description' => 'POS terminal hardware settings, receipt printer paper width (58mm / 80mm), cash drawer kickers, and kitchen buzzers.',
+                'description' => '',
                 'features' => [
                     'Receipt Thermal Printer Routing (58mm / 80mm)',
                     'Kitchen KDS Buzzer & Bell Frequency',
@@ -201,7 +201,7 @@ class AdminModuleController extends Controller
                 'title' => 'Audit Logs',
                 'icon' => '📜',
                 'category' => 'Administration & System',
-                'description' => 'Immutable audit trails recording staff logins, price changes, bill void approvals, and cash drawer reconciliations.',
+                'description' => '',
                 'features' => [
                     'Staff Login & Terminal Unlock Timestamps',
                     'Bill Void & Order Discount Authorizations',
@@ -213,7 +213,7 @@ class AdminModuleController extends Controller
                 'title' => 'Account / Security',
                 'icon' => '🔐',
                 'category' => 'Administration & System',
-                'description' => 'Owner credential governance, two-factor authentication, active session revocation, and security alerts.',
+                'description' => '',
                 'features' => [
                     'Owner Master Password & Recovery Keys',
                     'Two-Factor Authentication (2FA) Setup',

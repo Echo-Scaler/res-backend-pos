@@ -171,9 +171,6 @@
                 <i class="ti ti-ticket" style="color: var(--primary);"></i>
                 Discounts & Promotional Coupons
             </h1>
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 0.25rem;">
-                Create promotional coupon codes, percentage discounts, minimum bill thresholds, and happy hour specials for <strong>{{ $restaurant->name ?? 'Restaurant' }}</strong>.
-            </p>
         </div>
         <div>
             <button type="button" class="btn-create-promo" onclick="openModal('promoModal')">

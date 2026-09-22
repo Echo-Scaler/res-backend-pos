@@ -84,20 +84,27 @@
     }
 
     .stat-card-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         flex-shrink: 0;
     }
 
-    .icon-owner { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
-    .icon-manager { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
-    .icon-cashier { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-    .icon-staff { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+    /* Force icon font within icon containers */
+    .stat-card-icon i,
+    .stat-card-icon .ti {
+        font-family: "tabler-icons" !important;
+        font-size: 1.4rem;
+    }
+
+    .icon-owner  { background: rgba(239, 68, 68, 0.12);  color: #ef4444; }
+    .icon-manager{ background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+    .icon-cashier{ background: rgba(16, 185, 129, 0.12); color: #10b981; }
+    .icon-staff  { background: rgba(249, 115, 22, 0.12); color: #f97316; }
 
     .stat-card-info .label {
         font-size: 0.8rem;
@@ -611,24 +618,33 @@
         display: block;
     }
 
+    .matrix-scroll-container {
+        max-height: 680px;
+        overflow-y: auto;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
     .matrix-table {
         width: 100%;
         min-width: 820px;
         border-collapse: separate;
         border-spacing: 0;
+        background: var(--bg-card);
     }
 
     .matrix-table thead th {
         position: sticky;
-        top: var(--header-height);
+        top: 0;
         background: var(--bg-card);
-        z-index: 15;
-        padding: 1.15rem 1rem;
+        z-index: 25;
+        padding: 1.1rem 1rem;
         font-size: 0.85rem;
         font-weight: 700;
         color: var(--text-main);
         border-bottom: 2px solid var(--border-color);
-        box-shadow: 0 3px 6px -2px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     }
 
     .matrix-table td {
@@ -643,13 +659,19 @@
     }
 
     .matrix-group-header {
-        background: rgba(var(--primary-rgb), 0.06) !important;
-        font-weight: 800 !important;
+        position: sticky;
+        top: 49px;
+        z-index: 20;
+        background: var(--bg-card-tint, var(--bg-body)) !important;
+        font-weight: 700 !important;
         color: var(--primary) !important;
         text-transform: uppercase;
         letter-spacing: 0.04em;
         font-size: 0.82rem !important;
         padding: 0.75rem 1.25rem !important;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     }
 
     /* Interactive Permission Buttons */
@@ -665,7 +687,15 @@
         cursor: pointer;
         border: 1px solid transparent;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        min-width: 95px;
+        min-width: 100px;
+        font-family: var(--font-family-base) !important;
+    }
+
+    /* Icon protection inside perm buttons */
+    .perm-action-btn i,
+    .perm-action-btn .ti {
+        font-family: "tabler-icons" !important;
+        font-size: 0.9rem;
     }
 
     .perm-action-btn.granted {
@@ -891,7 +921,7 @@
                 <i class="ti ti-shield-lock" style="color: var(--primary);"></i>
                 Roles & Permissions
             </h1>
-            <p>Manage team access policies, assign operational roles, and review Spatie RBAC authorizations for <strong>{{ $restaurant->name ?? 'Restaurant' }}</strong>.</p>
+          
         </div>
         <div class="role-header-actions">
             <a href="{{ route('admin.employees.create') }}" class="btn-invite">
@@ -950,7 +980,7 @@
                 <span class="tab-badge">{{ $stats['total_users'] }}</span>
             </button>
             <button type="button" class="workspace-tab-btn" onclick="switchWorkspaceTab('permissions-matrix', this)">
-                <i class="ti ti-matrix"></i>
+                <i class="ti ti-table"></i>
                 <span>Permissions Matrix (RBAC)</span>
                 <span class="tab-badge">{{ $stats['total_permissions'] }}</span>
             </button>
@@ -1069,7 +1099,7 @@
                 Sticky Table Navigation Enabled
             </div>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive matrix-scroll-container">
         <table class="matrix-table">
             <thead>
                 <tr>

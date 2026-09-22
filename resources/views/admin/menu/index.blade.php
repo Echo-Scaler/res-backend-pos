@@ -303,9 +303,6 @@
                 <i class="ti ti-salad" style="color: var(--primary);"></i>
                 Menu & Products
             </h1>
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-top: 0.25rem;">
-                Organize food categories, dish pricing, kitchen modifiers, and daily stock availability for <strong>{{ $restaurant->name ?? 'Restaurant' }}</strong>.
-            </p>
         </div>
         <div class="menu-header-actions">
             <button type="button" class="btn-create-category" onclick="openModal('categoryModal')">

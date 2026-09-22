@@ -288,9 +288,6 @@
                 {{ $restaurant->name ?? 'Restaurant Staff' }}
             </span>
         </div>
-        <p class="page-subtitle">
-            Manage your restaurant team members, assign POS PINs for fast terminal unlocking, and control staff roles.
-        </p>
     </div>
 
     <div>

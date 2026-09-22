@@ -119,11 +119,34 @@
             --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.7);
         }
 
-        * {
+        /* Standardized Typography Scale (Mada) */
+        :root {
+            --font-family-base: "Mada", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Strict Font Sizes */
+            --font-size-kpi: 1.625rem;       /* 26px (KPI values, large metrics) */
+            --font-size-h1: 1.5rem;          /* 24px (Page main titles) */
+            --font-size-h2: 1.25rem;         /* 20px (Section headings, modal headers) */
+            --font-size-card-title: 1.05rem; /* ~17px (Card titles, widget titles) */
+            --font-size-body: 0.9375rem;     /* 15px (Default body text, table cells) */
+            --font-size-sm: 0.84375rem;      /* 13.5px (Subtitles, button text, inputs) */
+            --font-size-xs: 0.75rem;         /* 12px (Badges, tags, hints, timestamps) */
+
+            /* Strict Font Weights */
+            --font-weight-regular: 400;      /* Standard paragraph & reading text */
+            --font-weight-medium: 500;       /* Interactive text, dropdown items, inputs */
+            --font-weight-semibold: 600;     /* Card titles, table headers, buttons */
+            --font-weight-bold: 700;         /* KPI metrics, page titles, important badges */
+        }
+
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Mada", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html, body {
+            font-family: var(--font-family-base);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -132,12 +155,44 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            font-size: 15px;
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-regular);
             line-height: 1.5;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
             transition: background-color var(--transition);
+        }
+
+        h1, h2, h3, h4, h5, h6, p, span, a, label, table, th, td, div, li, ul, ol, strong, b, small {
+            font-family: var(--font-family-base);
+        }
+
+        h1 { font-size: var(--font-size-h1); font-weight: var(--font-weight-bold); }
+        h2 { font-size: var(--font-size-h2); font-weight: var(--font-weight-bold); }
+        h3 { font-size: var(--font-size-card-title); font-weight: var(--font-weight-semibold); }
+        h4 { font-size: var(--font-size-card-title); font-weight: var(--font-weight-semibold); }
+        h5 { font-size: var(--font-size-body); font-weight: var(--font-weight-semibold); }
+        h6 { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); }
+
+        button, input, select, textarea, optgroup {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Strict protection for icon webfonts (Tabler Icons) */
+        .ti, [class^="ti-"], [class*=" ti-"],
+        .ti::before, [class^="ti-"]::before, [class*=" ti-"]::before {
+            font-family: "tabler-icons" !important;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            display: inline-block;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* PreAdmin Main Shell */
@@ -579,18 +634,24 @@
             padding: 0.75rem 0;
         }
         body.sidebar-collapsed .page-wrapper {
+            width: calc(100% - var(--sidebar-collapsed-width));
+            max-width: calc(100% - var(--sidebar-collapsed-width));
             margin-left: var(--sidebar-collapsed-width);
         }
 
         /* Page Content Wrapper */
         .page-wrapper {
             flex: 1;
+            width: calc(100% - var(--sidebar-width));
+            max-width: calc(100% - var(--sidebar-width));
+            min-width: 0;
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
             min-height: calc(100vh - var(--header-height));
             transition: var(--transition);
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
         }
 
         .content {
@@ -599,6 +660,7 @@
             max-width: 1440px;
             width: 100%;
             margin: 0 auto;
+            box-sizing: border-box;
         }
 
         /* Alerts */
@@ -655,6 +717,8 @@
                 box-shadow: var(--shadow-lg);
             }
             .page-wrapper {
+                width: 100% !important;
+                max-width: 100% !important;
                 margin-left: 0 !important;
             }
             .header-left {
