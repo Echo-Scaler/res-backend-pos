@@ -15,9 +15,11 @@ class RoleSeeder extends Seeder
     {
         // Define fine-grained permissions
         $permissions = [
-            // Menu & Table Operations (Owner + Manager)
+            // Menu, Inventory & Promotions Operations (Owner + Manager)
             'manage-menu',
             'manage-tables',
+            'manage-inventory',
+            'manage-promotions',
 
             // Employee Management
             'manage-staff',         // Can create/manage Cashier & Staff (Owner + Manager)
@@ -31,6 +33,7 @@ class RoleSeeder extends Seeder
             // POS Operations (Cashier & Staff)
             'pos-checkout',
             'take-orders',
+            'apply-discounts',
         ];
 
         foreach ($permissions as $permission) {
@@ -46,18 +49,20 @@ class RoleSeeder extends Seeder
         // 1. OWNER: Full control over everything
         $ownerRole->syncPermissions(Permission::all());
 
-        // 2. MANAGER: Restricted - Can manage menu, tables, and staff (Cashier & Staff),
-        // but CANNOT manage managers, cannot manage sensitive settings, cannot delete restaurant.
+        // 2. MANAGER: Supervise operations - menu, tables, inventory, promotions, and staff (Cashier & Staff)
         $managerRole->syncPermissions([
             'manage-menu',
             'manage-tables',
+            'manage-inventory',
+            'manage-promotions',
             'manage-staff',
         ]);
 
-        // 3. CASHIER: POS checkout and taking orders
+        // 3. CASHIER: POS checkout, taking orders, and applying approved discounts
         $cashierRole->syncPermissions([
             'pos-checkout',
             'take-orders',
+            'apply-discounts',
         ]);
 
         // 4. STAFF: Taking orders only

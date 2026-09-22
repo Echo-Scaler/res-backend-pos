@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 
 class EmployeeController extends Controller
 {
@@ -98,10 +99,43 @@ class EmployeeController extends Controller
 
         $allowedRoles = $this->getAllowedRolesForEditing($currentUser, $employee);
 
+        $allPermissions = Permission::all();
+        $directPermissions = $employee->getDirectPermissions()->pluck('name')->toArray();
+        $rolePermissions = $employee->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $permissionGroups = [
+            'POS & Ordering Operations' => [
+                'pos-checkout' => 'Counter POS Register, Cash Drawer & Billing',
+                'take-orders' => 'Tableside Ordering, KDS routing & Guest Service',
+                'apply-discounts' => 'Apply Authorized Discounts & Promotional Coupons at POS Checkout',
+            ],
+            'Dining, Menu & Inventory Operations' => [
+                'manage-menu' => 'Create & Edit Food Categories, Dishes & Pricing Modifiers',
+                'manage-tables' => 'Floor Plan, Seating Zones & QR Ordering Codes',
+                'manage-inventory' => 'Track Kitchen Stock Levels, Deductions & Low-Stock Alerts',
+            ],
+            'Marketing & Special Promotions' => [
+                'manage-promotions' => 'Create & Configure Percentage or Fixed Coupons & Special Offers',
+            ],
+            'Staff & Account Delegation' => [
+                'manage-staff' => 'Recruit & Supervise Cashiers and Dining Waiters',
+                'manage-managers' => 'Appoint & Delegate Operations Managers (Owner Only)',
+            ],
+            'Financials & Executive Governance' => [
+                'view-financial-reports' => 'Profit/Loss Analytics, Daily Revenue & Shift Reconciliations',
+                'manage-restaurant-settings' => 'Tax, Service Charge, Hardware & Store Profile',
+                'delete-restaurant' => 'Permanent Restaurant Purge & Master Reset (Owner Only)',
+            ],
+        ];
+
         return view('admin.employees.edit', [
             'employee' => $employee,
             'allowedRoles' => $allowedRoles,
             'currentUser' => $currentUser,
+            'allPermissions' => $allPermissions,
+            'directPermissions' => $directPermissions,
+            'rolePermissions' => $rolePermissions,
+            'permissionGroups' => $permissionGroups,
         ]);
     }
 
@@ -110,6 +144,7 @@ class EmployeeController extends Controller
      */
     public function update(UpdateEmployeeRequest $request, User $employee): RedirectResponse
     {
+        $currentUser = $request->user();
         $validated = $request->validated();
 
         $updateData = [
@@ -130,6 +165,18 @@ class EmployeeController extends Controller
 
         // Sync role
         $employee->syncRoles([$validated['role']]);
+
+        // Sync direct user-level permissions (Applicable ONLY to CASHIER and STAFF)
+        if ($currentUser->hasRole('OWNER')) {
+            if (in_array($validated['role'], ['CASHIER', 'STAFF'])) {
+                if ($request->has('direct_permissions_override_submitted') || array_key_exists('direct_permissions', $validated)) {
+                    $employee->syncPermissions($validated['direct_permissions'] ?? []);
+                }
+            } else {
+                // Clear any individual direct overrides if role is OWNER or MANAGER
+                $employee->syncPermissions([]);
+            }
+        }
 
         return redirect()->route('admin.employees.index')
             ->with('success', "Employee '{$employee->name}' details updated successfully.");
