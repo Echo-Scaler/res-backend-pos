@@ -59,6 +59,9 @@ class UpdateEmployeeRequest extends FormRequest
             'role' => ['required', 'string', Rule::in($allowedRoles)],
             'password' => ['nullable', 'string', 'min:6'],
             'pin_code' => ['nullable', 'digits_between:4,6'],
+            'direct_permissions' => ['nullable', 'array'],
+            'direct_permissions.*' => ['string', Rule::exists('permissions', 'name')],
+            'direct_permissions_override_submitted' => ['nullable', 'boolean'],
         ];
     }
 

@@ -25,6 +25,14 @@ class OwnerDashboardMetricsService
             'staff_activity' => $this->getStaffActivity($restaurant),
             'sales_by_date' => $this->getSalesByDate($restaurant),
             'sales_by_category' => $this->getSalesByCategory($restaurant),
+            'table_occupancy' => $this->getTableOccupancy($restaurant),
+            'recent_orders' => $this->getRecentOrders($restaurant),
+            'total_guests' => $this->getTotalGuestsCount($restaurant),
+            'table_turnover_rate' => $this->getTableTurnoverRate($restaurant),
+            'avg_kitchen_prep_time' => $this->getAvgKitchenPrepTime($restaurant),
+            'cash_drawer_balance' => $this->getCashDrawerBalance($restaurant),
+            'featured_dish' => $this->getFeaturedDish($restaurant),
+            'floor_tables' => $this->getFloorTables($restaurant),
         ];
     }
 
@@ -292,5 +300,169 @@ class OwnerDashboardMetricsService
                 'color' => '#ec4899',
             ],
         ];
+    }
+
+    /**
+     * 11. Table occupancy overview.
+     *
+     * @return array<string, mixed>
+     */
+    public function getTableOccupancy(Restaurant $restaurant): array
+    {
+        return [
+            'total_tables' => 24,
+            'occupied' => 18,
+            'available' => 4,
+            'reserved' => 2,
+            'rate_percentage' => 75,
+        ];
+    }
+
+    /**
+     * 12. Recent dining orders for PreAdmin styled table.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRecentOrders(Restaurant $restaurant): array
+    {
+        return [
+            [
+                'order_code' => '#ORD-2045',
+                'table' => 'Table 04 (Main Hall)',
+                'customer_name' => 'Ko Aung Min',
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=Aung+Min&background=3b82f6&color=fff&bold=true',
+                'items_count' => 4,
+                'dining_type' => 'Dine-in',
+                'amount' => 48500,
+                'status' => 'IN_DINING',
+                'status_label' => 'In Dining',
+                'payment_method' => 'KBZPay QR',
+                'time' => '12:45 PM',
+            ],
+            [
+                'order_code' => '#ORD-2044',
+                'table' => 'Table 12 (VIP Room)',
+                'customer_name' => 'Daw Thuzar',
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=Thuzar&background=ec4899&color=fff&bold=true',
+                'items_count' => 7,
+                'dining_type' => 'Dine-in',
+                'amount' => 112000,
+                'status' => 'BILLING',
+                'status_label' => 'Billing',
+                'payment_method' => 'WavePay',
+                'time' => '12:30 PM',
+            ],
+            [
+                'order_code' => '#ORD-2043',
+                'table' => 'Counter / Bar',
+                'customer_name' => 'U Hla Win',
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=Hla+Win&background=10b981&color=fff&bold=true',
+                'items_count' => 2,
+                'dining_type' => 'Takeaway',
+                'amount' => 16500,
+                'status' => 'COMPLETED',
+                'status_label' => 'Completed',
+                'payment_method' => 'Cash',
+                'time' => '12:15 PM',
+            ],
+            [
+                'order_code' => '#ORD-2042',
+                'table' => 'Table 07 (Terrace)',
+                'customer_name' => 'Ma Sandar',
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=Sandar&background=f97316&color=fff&bold=true',
+                'items_count' => 5,
+                'dining_type' => 'Dine-in',
+                'amount' => 64000,
+                'status' => 'COMPLETED',
+                'status_label' => 'Completed',
+                'payment_method' => 'Visa Card',
+                'time' => '11:50 AM',
+            ],
+            [
+                'order_code' => '#ORD-2041',
+                'table' => 'Table 02 (Main Hall)',
+                'customer_name' => 'Ko Sai Yan',
+                'customer_avatar' => 'https://ui-avatars.com/api/?name=Sai+Yan&background=8b5cf6&color=fff&bold=true',
+                'items_count' => 3,
+                'dining_type' => 'Dine-in',
+                'amount' => 32000,
+                'status' => 'COMPLETED',
+                'status_label' => 'Completed',
+                'payment_method' => 'KBZPay QR',
+                'time' => '11:25 AM',
+            ],
+        ];
+    }
+
+    /**
+     * 13. Featured or Chef's recommendation dish.
+     *
+     * @return array<string, mixed>
+     */
+    public function getFeaturedDish(Restaurant $restaurant): array
+    {
+        return [
+            'name' => 'Shan Noodle Special Set',
+            'category' => 'Main Chef Special',
+            'price' => 6000,
+            'formatted_price' => '6,000 MMK',
+            'prep_time' => '10 Mins',
+            'spice_level' => 'Mild Spicy',
+            'servings' => '1-2 Person',
+            'sold_qty' => 42,
+            'rating' => 4.9,
+            'image' => 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80',
+        ];
+    }
+
+    /**
+     * 14. Floor table states for the restaurant floor visualizer.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getFloorTables(Restaurant $restaurant): array
+    {
+        return [
+            ['id' => 'T-01', 'name' => 'Table 01', 'capacity' => '4 Pax', 'status' => 'OCCUPIED', 'server' => 'Su Su', 'orders_count' => 3, 'spent' => '34,000 MMK', 'elapsed' => '35 min'],
+            ['id' => 'T-02', 'name' => 'Table 02', 'capacity' => '2 Pax', 'status' => 'AVAILABLE', 'server' => '-', 'orders_count' => 0, 'spent' => '0 MMK', 'elapsed' => '-'],
+            ['id' => 'T-03', 'name' => 'Table 03', 'capacity' => '4 Pax', 'status' => 'BILLING', 'server' => 'Min Min', 'orders_count' => 4, 'spent' => '52,500 MMK', 'elapsed' => '55 min'],
+            ['id' => 'T-04', 'name' => 'Table 04', 'capacity' => '6 Pax', 'status' => 'OCCUPIED', 'server' => 'Su Su', 'orders_count' => 5, 'spent' => '78,000 MMK', 'elapsed' => '20 min'],
+            ['id' => 'T-05', 'name' => 'Table 05', 'capacity' => '4 Pax', 'status' => 'RESERVED', 'server' => 'Kyaw Kyaw', 'orders_count' => 0, 'spent' => 'Deposit Paid', 'elapsed' => '1:30 PM'],
+            ['id' => 'T-06', 'name' => 'Table 06', 'capacity' => '2 Pax', 'status' => 'AVAILABLE', 'server' => '-', 'orders_count' => 0, 'spent' => '0 MMK', 'elapsed' => '-'],
+            ['id' => 'T-07', 'name' => 'Table 07', 'capacity' => '8 Pax', 'status' => 'OCCUPIED', 'server' => 'Aung Aung', 'orders_count' => 8, 'spent' => '142,000 MMK', 'elapsed' => '45 min'],
+            ['id' => 'T-08', 'name' => 'Table 08', 'capacity' => '4 Pax', 'status' => 'AVAILABLE', 'server' => '-', 'orders_count' => 0, 'spent' => '0 MMK', 'elapsed' => '-'],
+        ];
+    }
+
+    /**
+     * 15. Total guest covers served today.
+     */
+    public function getTotalGuestsCount(Restaurant $restaurant): int
+    {
+        return 248;
+    }
+
+    /**
+     * 16. Table turnover rate (turns per table today).
+     */
+    public function getTableTurnoverRate(Restaurant $restaurant): float
+    {
+        return 3.6;
+    }
+
+    /**
+     * 17. Average kitchen preparation / ticket fulfillment speed in minutes.
+     */
+    public function getAvgKitchenPrepTime(Restaurant $restaurant): float
+    {
+        return 12.5;
+    }
+
+    /**
+     * 18. Cash register drawer float & session balance in MMK.
+     */
+    public function getCashDrawerBalance(Restaurant $restaurant): int
+    {
+        return 435000;
     }
 }
