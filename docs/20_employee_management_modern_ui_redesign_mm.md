@@ -49,3 +49,18 @@
 
 - **PHPUnit Feature & Unit Tests**: စုစုပေါင်း ၇၄ ခုလုံး 100% Pass (Passed 74 of 74).
 - **Laravel Pint Code Styling**: Formatting & PSR standards 100% Pass.
+
+---
+
+## ၅။ Git Flow Synchronization (အဘယ်ကြောင့် Main တွင် Code အသစ်များ မတွေ့ခဲ့ရသနည်း)
+
+1. **ဖြစ်ပေါ်ရသည့် အကြောင်းအရင်း**:
+   - အသစ်ရေးသားခဲ့သော Code များနှင့် မှတ်တမ်းများသည် Feature Branch ဖြစ်သည့် `feature/develop/003-employee-directory` ပေါ်တွင်သာ Commit ပြုလုပ်ထားခဲ့ခြင်း ဖြစ်ပါသည်။
+   - `develop` သို့မဟုတ် `main` branch ထဲသို့ `git merge` မပြုလုပ်ရသေးဘဲ `git checkout main` သို့မဟုတ် `git checkout develop` သို့ ပြောင်းလိုက်ပါက Git သည် ဖိုင်များကို ထို branch များရှိ မူလ version သို့ ပြောင်းလဲပြသသဖြင့် Code အသစ်များ ပျောက်နေသကဲ့သို့ ဖြစ်သွားခြင်း ဖြစ်ပါသည်။
+2. **ဖြေရှင်းပြီးစီးမှု အဆင့်များ**:
+   - `git checkout develop`
+   - `git merge --no-ff feature/develop/003-employee-directory` -> `git push origin develop`
+   - `git checkout main`
+   - `git merge --no-ff develop` -> `git push origin main`
+   - ယခုအခါ `feature/develop/003-employee-directory`, `develop` နှင့် `main` branch အားလုံးတွင် အသစ်ပြင်ဆင်ထားသော UI Code များ ၁၀၀% တူညီစွာ ထည့်သွင်းပေါင်းစပ်ပြီး ဖြစ်ပါသည်။
+
