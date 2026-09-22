@@ -891,7 +891,7 @@
                 <i class="ti ti-shield-lock" style="color: var(--primary);"></i>
                 Roles & Permissions
             </h1>
-            <p>Manage team access policies, assign operational roles, and review Spatie RBAC authorizations for <strong>{{ $restaurant->name ?? 'Restaurant' }}</strong>.</p>
+
         </div>
         <div class="role-header-actions">
             <a href="{{ route('admin.employees.create') }}" class="btn-invite">
