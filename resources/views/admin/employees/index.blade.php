@@ -14,27 +14,31 @@
     }
 
     .page-title {
+        font-family: "Mada", sans-serif;
         font-size: 1.75rem;
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: -0.02em;
+        color: var(--text-main);
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        flex-wrap: wrap;
     }
 
     .page-subtitle {
         color: var(--text-muted);
-        font-size: 0.95rem;
-        margin-top: 0.25rem;
+        font-size: 0.9375rem;
+        font-weight: 400;
+        margin-top: 0.3rem;
     }
 
     .btn-primary {
-        background-color: var(--primary);
-        color: #fff;
+        background: linear-gradient(135deg, #9ec63b, #7ea826);
+        color: #ffffff !important;
         padding: 0.7rem 1.4rem;
-        border-radius: 10px;
+        border-radius: var(--radius-sm);
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.9375rem;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -42,36 +46,41 @@
         transition: all 0.2s ease;
         border: none;
         cursor: pointer;
+        box-shadow: 0 4px 12px rgba(158, 198, 59, 0.28);
     }
 
     .btn-primary:hover {
-        background-color: var(--primary-hover);
         transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(158, 198, 59, 0.38);
+        filter: brightness(1.03);
     }
 
     .btn-secondary {
-        background-color: var(--bg-card);
+        background-color: var(--bg-hover);
         color: var(--text-main);
-        border: 1px solid var(--border);
-        padding: 0.6rem 1.1rem;
-        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 0.65rem 1.15rem;
+        border-radius: var(--radius-sm);
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        transition: all 0.2s ease;
+        transition: var(--transition);
+        cursor: pointer;
     }
 
     .btn-secondary:hover {
-        background-color: var(--bg-card-hover);
+        background-color: var(--border-color);
+        color: var(--text-main);
     }
 
     .filter-bar {
         background-color: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
         padding: 1.25rem;
         margin-bottom: 1.5rem;
         display: flex;
@@ -88,20 +97,23 @@
         max-width: 500px;
     }
 
-    .form-input, .form-select {
-        background-color: var(--bg-main);
-        border: 1px solid var(--border);
+    .form-input {
+        background-color: var(--bg-body);
+        border: 1.5px solid var(--border-color);
         color: var(--text-main);
         padding: 0.65rem 1rem;
-        border-radius: 8px;
+        border-radius: var(--radius-sm);
         font-size: 0.9rem;
+        font-family: "Mada", sans-serif;
         width: 100%;
         outline: none;
-        transition: border-color 0.2s ease;
+        transition: var(--transition);
     }
 
-    .form-input:focus, .form-select:focus {
+    .form-input:focus {
         border-color: var(--primary);
+        background-color: var(--bg-card);
+        box-shadow: 0 0 0 3px rgba(158, 198, 59, 0.2);
     }
 
     .role-pills {
@@ -111,27 +123,28 @@
     }
 
     .role-pill {
-        padding: 0.4rem 0.85rem;
+        padding: 0.45rem 0.9rem;
         border-radius: 9999px;
-        font-size: 0.8rem;
+        font-size: 0.8125rem;
         font-weight: 600;
         text-decoration: none;
-        border: 1px solid var(--border);
+        border: 1.5px solid var(--border-color);
         color: var(--text-muted);
-        background: var(--bg-main);
-        transition: all 0.2s ease;
+        background: var(--bg-card);
+        transition: var(--transition);
     }
 
     .role-pill.active, .role-pill:hover {
         border-color: var(--primary);
-        color: var(--primary);
-        background: rgba(249, 115, 22, 0.1);
+        color: var(--primary-hover);
+        background: rgba(158, 198, 59, 0.12);
     }
 
     .table-container {
         background-color: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
         overflow: hidden;
     }
 
@@ -144,18 +157,18 @@
     .emp-table th {
         background-color: var(--bg-hover);
         color: var(--text-muted);
-        font-size: 0.8rem;
-        font-weight: 700;
+        font-size: 0.8125rem;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--border-color);
     }
 
     .emp-table td {
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.9375rem;
         vertical-align: middle;
         color: var(--text-main);
     }
@@ -175,17 +188,18 @@
     }
 
     .user-avatar {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         border-radius: 10px;
         background: var(--primary-light);
-        border: 1px solid var(--border);
+        border: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 800;
-        color: var(--primary);
-        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--primary-hover);
+        font-size: 1rem;
+        flex-shrink: 0;
     }
 
     .user-name-title {
@@ -193,12 +207,13 @@
         color: var(--text-main);
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.45rem;
     }
 
     .user-email-text {
-        font-size: 0.8rem;
+        font-size: 0.8125rem;
         color: var(--text-muted);
+        margin-top: 0.15rem;
     }
 
     .badge-role {
@@ -211,24 +226,78 @@
         letter-spacing: 0.04em;
     }
 
-    .badge-pin-set {
-        background-color: rgba(16, 185, 129, 0.15);
-        color: #6ee7b7;
+    .role-owner {
+        background-color: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    [data-theme="dark"] .role-owner {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+
+    .role-manager {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: #2563eb;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    [data-theme="dark"] .role-manager {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+    }
+
+    .role-cashier {
+        background-color: rgba(16, 185, 129, 0.12);
+        color: #059669;
         border: 1px solid rgba(16, 185, 129, 0.3);
-        padding: 0.2rem 0.5rem;
+    }
+    [data-theme="dark"] .role-cashier {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+    }
+
+    .role-staff {
+        background-color: rgba(158, 198, 59, 0.15);
+        color: #4d7c0f;
+        border: 1px solid rgba(158, 198, 59, 0.35);
+    }
+    [data-theme="dark"] .role-staff {
+        background-color: rgba(158, 198, 59, 0.2);
+        color: #bef264;
+    }
+
+    .badge-pin-set {
+        background-color: rgba(16, 185, 129, 0.12);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.28);
+        padding: 0.25rem 0.55rem;
         border-radius: 6px;
         font-size: 0.75rem;
         font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    [data-theme="dark"] .badge-pin-set {
+        background-color: rgba(16, 185, 129, 0.18);
+        color: #6ee7b7;
     }
 
     .badge-pin-missing {
-        background-color: rgba(239, 68, 68, 0.15);
-        color: #fca5a5;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        padding: 0.2rem 0.5rem;
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        padding: 0.25rem 0.55rem;
         border-radius: 6px;
         font-size: 0.75rem;
         font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    [data-theme="dark"] .badge-pin-missing {
+        background-color: rgba(239, 68, 68, 0.18);
+        color: #fca5a5;
     }
 
     .actions-cell {
@@ -238,37 +307,65 @@
     }
 
     .btn-edit {
-        background: rgba(99, 102, 241, 0.15);
-        color: #a5b4fc;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
+        background: rgba(99, 102, 241, 0.12);
+        color: #4f46e5;
+        border: 1px solid rgba(99, 102, 241, 0.28);
+        padding: 0.4rem 0.85rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
         font-weight: 600;
         text-decoration: none;
-        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: var(--transition);
     }
 
     .btn-edit:hover {
+        background: #4f46e5;
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .btn-edit {
+        background: rgba(99, 102, 241, 0.2);
+        color: #a5b4fc;
+        border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    [data-theme="dark"] .btn-edit:hover {
         background: #6366f1;
-        color: #fff;
+        color: #ffffff;
     }
 
     .btn-delete {
-        background: rgba(239, 68, 68, 0.15);
-        color: #fca5a5;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        padding: 0.4rem 0.8rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.28);
+        padding: 0.4rem 0.85rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: var(--transition);
     }
 
     .btn-delete:hover {
         background: var(--danger);
-        color: #fff;
+        color: #ffffff;
+    }
+
+    [data-theme="dark"] .btn-delete {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    [data-theme="dark"] .btn-delete:hover {
+        background: #ef4444;
+        color: #ffffff;
     }
 
     .empty-state {
@@ -283,14 +380,13 @@
 <div class="page-header">
     <div>
         <div class="page-title">
-            <span>👥 Employee Management</span>
-            <span style="font-size: 0.85rem; padding: 0.3rem 0.7rem; border-radius: 9999px; background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3);">
+            <span>👥</span>
+            <span>Employee Management</span>
+            <span style="font-size: 0.8125rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(158, 198, 59, 0.15); color: var(--primary-hover); border: 1px solid rgba(158, 198, 59, 0.3); font-weight: 600;">
                 {{ $restaurant->name ?? 'Restaurant Staff' }}
             </span>
         </div>
-        <p class="page-subtitle">
-            Manage your restaurant team members, assign POS PINs for fast terminal unlocking, and control staff roles.
-        </p>
+        
     </div>
 
     <div>
@@ -369,7 +465,7 @@
                                 <div class="user-name-title">
                                     <span>{{ $employee->name }}</span>
                                     @if($employee->id === $currentUser->id)
-                                        <span style="font-size: 0.7rem; background: rgba(148, 163, 184, 0.2); color: #94a3b8; padding: 0.1rem 0.4rem; border-radius: 4px;">(You)</span>
+                                        <span style="font-size: 0.7rem; background: rgba(148, 163, 184, 0.2); color: var(--text-muted); padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 600;">(You)</span>
                                     @endif
                                 </div>
                                 <div class="user-email-text">{{ $employee->email }}</div>
@@ -386,7 +482,7 @@
                     </td>
                     <td>
                         @if($employee->pin_code)
-                            <span class="badge-pin-set">🔒 PIN Active (4-6 digits)</span>
+                            <span class="badge-pin-set">🔒 PIN Active</span>
                         @else
                             <span class="badge-pin-missing">⚠️ Not Assigned</span>
                         @endif
@@ -399,19 +495,25 @@
                     <td style="text-align: right;">
                         <div class="actions-cell" style="justify-content: flex-end;">
                             @if($canEdit)
-                                <a href="{{ route('admin.employees.edit', $employee) }}" class="btn-edit">Edit</a>
+                                <a href="{{ route('admin.employees.edit', $employee) }}" class="btn-edit">
+                                    <span>✏️</span>
+                                    <span>Edit</span>
+                                </a>
                             @endif
 
                             @if($canDelete)
                                 <form action="{{ route('admin.employees.destroy', $employee) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove {{ $employee->name }}? This action cannot be undone.');" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-delete">Delete</button>
+                                    <button type="submit" class="btn-delete">
+                                        <span>🗑️</span>
+                                        <span>Delete</span>
+                                    </button>
                                 </form>
                             @endif
 
                             @if(!$canEdit && !$canDelete)
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">Protected</span>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">Protected</span>
                             @endif
                         </div>
                     </td>
@@ -420,7 +522,7 @@
                 <tr>
                     <td colspan="6" class="empty-state">
                         <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">👥</div>
-                        <h4 style="color: #f8fafc; margin-bottom: 0.25rem;">No employees found</h4>
+                        <h4 style="color: var(--text-main); font-weight: 700; margin-bottom: 0.25rem;">No employees found</h4>
                         <p style="font-size: 0.85rem;">Try adjusting your search query or add a new team member.</p>
                     </td>
                 </tr>
