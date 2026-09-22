@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Http\Resources\EmployeeResource;
 use App\Models\Restaurant;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
@@ -238,5 +239,19 @@ class EmployeeManagementTest extends TestCase
 
         $response = $this->actingAs($this->owner)->delete(route('admin.employees.destroy', $otherEmployee));
         $response->assertNotFound();
+    }
+
+    public function test_employee_resource_transforms_data_securely_without_exposing_pin(): void
+    {
+        $this->cashier->update(['pin_code' => '4321', 'phone' => '0911223344']);
+        $resource = (new EmployeeResource($this->cashier))->toArray(request());
+
+        $this->assertEquals($this->cashier->id, $resource['id']);
+        $this->assertEquals('Ma Su - Cashier', $resource['name']);
+        $this->assertEquals('CASHIER', $resource['role']);
+        $this->assertEquals('0911223344', $resource['phone']);
+        $this->assertTrue($resource['has_pin']);
+        $this->assertArrayNotHasKey('pin_code', $resource);
+        $this->assertArrayNotHasKey('password', $resource);
     }
 }

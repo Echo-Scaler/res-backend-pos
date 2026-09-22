@@ -41,7 +41,7 @@
         .navbar {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border);
-            padding: 0.9rem 2rem;
+            padding: 0.85rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -57,7 +57,7 @@
             text-decoration: none;
             color: var(--text-main);
             font-weight: 800;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
         }
 
         .nav-brand-badge {
@@ -65,7 +65,7 @@
             color: #fff;
             padding: 0.35rem 0.65rem;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .nav-user {
@@ -135,10 +135,89 @@
             color: #fff;
         }
 
+        /* Layout Container with Sidebar */
+        .app-shell {
+            display: flex;
+            flex: 1;
+            min-height: calc(100vh - 65px);
+        }
+
+        .sidebar {
+            width: 270px;
+            background-color: #0b1120;
+            border-right: 1px solid var(--border);
+            padding: 1.25rem 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            flex-shrink: 0;
+            overflow-y: auto;
+            max-height: calc(100vh - 65px);
+            position: sticky;
+            top: 65px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0 0.75rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.85rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(249, 115, 22, 0.15);
+            color: #fb923c;
+            font-weight: 700;
+            border: 1px solid rgba(249, 115, 22, 0.25);
+        }
+
+        .sidebar-icon {
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
         .main-content {
             flex: 1;
             padding: 2rem;
-            max-width: 1280px;
+            max-width: 1360px;
             width: 100%;
             margin: 0 auto;
         }
@@ -160,6 +239,12 @@
             background-color: rgba(239, 68, 68, 0.15);
             border: 1px solid var(--danger);
             color: #fca5a5;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
         }
     </style>
     @stack('styles')
@@ -200,28 +285,162 @@
     </header>
     @endauth
 
-    <main class="main-content">
-        @if (session('status'))
-            <div class="alert alert-success">{{ session('status') }}</div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                @foreach ($errors->all() as $error)
-                    <div>{{ $error }}</div>
-                @endforeach
+    <div class="app-shell">
+        @if(Auth::check() && Auth::user()->hasRole('OWNER'))
+        <aside class="sidebar">
+            <div>
+                <div class="sidebar-section-title">Core Operations</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <span class="sidebar-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🧾</span>
+                            <span>Order Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.tables.index') }}" class="sidebar-link {{ request()->routeIs('admin.tables.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🪑</span>
+                            <span>Table Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.menu.index') }}" class="sidebar-link {{ request()->routeIs('admin.menu.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🍕</span>
+                            <span>Menu / Products</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
+
+            <div>
+                <div class="sidebar-section-title">Finance & Stock</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.payments.index') }}" class="sidebar-link {{ request()->routeIs('admin.payments.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">💳</span>
+                            <span>Payment Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.inventory.index') }}" class="sidebar-link {{ request()->routeIs('admin.inventory.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">📦</span>
+                            <span>Inventory Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.expenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.expenses.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">💰</span>
+                            <span>Expense Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.reports.index') }}" class="sidebar-link {{ request()->routeIs('admin.reports.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">📈</span>
+                            <span>Reports & Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="sidebar-section-title">Staff & Customers</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.employees.index') }}" class="sidebar-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}">
+                            <span class="sidebar-icon">👥</span>
+                            <span>Employee Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.roles.permissions') }}" class="sidebar-link {{ request()->routeIs('admin.roles.permissions') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🛡️</span>
+                            <span>Roles & Permissions</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.customers.index') }}" class="sidebar-link {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">👤</span>
+                            <span>Customer Management</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.promotions.index') }}" class="sidebar-link {{ request()->routeIs('admin.promotions.index') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🏷️</span>
+                            <span>Discounts / Promos</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="sidebar-section-title">Settings & Security</div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ route('admin.settings.restaurant') }}" class="sidebar-link {{ request()->routeIs('admin.settings.restaurant') ? 'active' : '' }}">
+                            <span class="sidebar-icon">⚙️</span>
+                            <span>Restaurant Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.settings.tax') }}" class="sidebar-link {{ request()->routeIs('admin.settings.tax') ? 'active' : '' }}">
+                            <span class="sidebar-icon">📑</span>
+                            <span>Tax & Service Charge</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.settings.business') }}" class="sidebar-link {{ request()->routeIs('admin.settings.business') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🏢</span>
+                            <span>Business Settings</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.audit.logs') }}" class="sidebar-link {{ request()->routeIs('admin.audit.logs') ? 'active' : '' }}">
+                            <span class="sidebar-icon">📜</span>
+                            <span>Audit Logs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.account.security') }}" class="sidebar-link {{ request()->routeIs('admin.account.security') ? 'active' : '' }}">
+                            <span class="sidebar-icon">🔐</span>
+                            <span>Account / Security</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
         @endif
 
-        @yield('content')
-    </main>
+        <div class="content-area">
+            <main class="main-content">
+                @if (session('status'))
+                    <div class="alert alert-success">{{ session('status') }}</div>
+                @endif
+
+                @if (session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                            <div>{{ $error }}</div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @yield('content')
+            </main>
+        </div>
+    </div>
 </body>
 </html>

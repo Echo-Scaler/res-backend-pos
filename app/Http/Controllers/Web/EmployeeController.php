@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Admin\Employee\UpdateEmployeeRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
@@ -67,19 +68,10 @@ class EmployeeController extends Controller
     /**
      * Store a newly created employee in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StoreEmployeeRequest $request): RedirectResponse
     {
         $currentUser = $request->user();
-        $allowedRoles = $this->getAllowedRolesForCreation($currentUser);
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'string', Rule::in($allowedRoles)],
-            'password' => ['required', 'string', 'min:6'],
-            'pin_code' => ['nullable', 'digits_between:4,6'],
-        ]);
+        $validated = $request->validated();
 
         $employee = User::create([
             'restaurant_id' => $currentUser->restaurant_id,
@@ -116,21 +108,9 @@ class EmployeeController extends Controller
     /**
      * Update the specified employee in storage.
      */
-    public function update(Request $request, User $employee): RedirectResponse
+    public function update(UpdateEmployeeRequest $request, User $employee): RedirectResponse
     {
-        $currentUser = $request->user();
-        $this->authorizeAccessToEmployee($currentUser, $employee);
-
-        $allowedRoles = $this->getAllowedRolesForEditing($currentUser, $employee);
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($employee->id)],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'string', Rule::in($allowedRoles)],
-            'password' => ['nullable', 'string', 'min:6'],
-            'pin_code' => ['nullable', 'digits_between:4,6'],
-        ]);
+        $validated = $request->validated();
 
         $updateData = [
             'name' => $validated['name'],
