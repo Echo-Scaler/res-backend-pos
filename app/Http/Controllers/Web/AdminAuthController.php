@@ -12,22 +12,22 @@ use Illuminate\View\View;
 class AdminAuthController extends Controller
 {
     /**
-     * Show the admin login form.
+     * Show the login form.
      */
     public function showLoginForm(): View|RedirectResponse
     {
         /** @var User|null $user */
         $user = Auth::user();
 
-        if ($user && ($user->hasRole('OWNER') || $user->hasRole('MANAGER'))) {
-            return redirect()->route('admin.dashboard');
+        if ($user) {
+            return $this->redirectBasedOnRole($user);
         }
 
         return view('admin.auth.login');
     }
 
     /**
-     * Handle admin login attempt.
+     * Handle login attempt.
      */
     public function login(Request $request): RedirectResponse
     {
@@ -47,24 +47,51 @@ class AdminAuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // Check if user has permission to enter Admin Management portal
-        if (! $user->hasAnyRole(['OWNER', 'MANAGER'])) {
+        if (! $user->hasAnyRole(['OWNER', 'MANAGER', 'CASHIER', 'STAFF'])) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return back()->withErrors([
-                'email' => 'Access denied. Only Restaurant Owners and Managers can enter the management portal.',
+                'email' => 'Access denied. You do not have permission to access the POS system.',
             ])->onlyInput('email');
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return $this->redirectBasedOnRole($user);
     }
 
     /**
-     * Log the user out of the admin portal.
+     * Redirect users to their dedicated dashboard based on role.
+     */
+    public function redirectBasedOnRole(User $user): RedirectResponse
+    {
+        if ($user->hasRole('OWNER')) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->hasRole('MANAGER')) {
+            return redirect()->route('manager.dashboard');
+        }
+
+        if ($user->hasRole('CASHIER')) {
+            return redirect()->route('cashier.dashboard');
+        }
+
+        if ($user->hasRole('STAFF')) {
+            return redirect()->route('staff.dashboard');
+        }
+
+        Auth::logout();
+
+        return redirect()->route('admin.login')->withErrors([
+            'email' => 'Your account does not have a designated POS role assigned.',
+        ]);
+    }
+
+    /**
+     * Log the user out of the portal.
      */
     public function logout(Request $request): RedirectResponse
     {

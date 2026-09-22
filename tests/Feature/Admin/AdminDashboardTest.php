@@ -119,20 +119,11 @@ class AdminDashboardTest extends TestCase
         $response->assertSee('Full Control (Owner Only)');
     }
 
-    public function test_authenticated_manager_can_view_dashboard_with_restricted_notice(): void
+    public function test_manager_cashier_and_staff_are_denied_access_to_owner_dashboard(): void
     {
-        $response = $this->actingAs($this->manager)->get('/admin/dashboard');
+        $managerResponse = $this->actingAs($this->manager)->get('/admin/dashboard');
+        $managerResponse->assertStatus(403);
 
-        $response->assertStatus(200);
-        $response->assertSee('Rangoon Spice Kitchen');
-        $response->assertSee('Operations Manager');
-        $response->assertSee('Manager Authority Active');
-        $response->assertSee('Staff Management Permitted');
-        $response->assertSee('Restricted to Owner Only');
-    }
-
-    public function test_cashier_and_staff_are_denied_access_to_dashboard(): void
-    {
         $cashierResponse = $this->actingAs($this->cashier)->get('/admin/dashboard');
         $cashierResponse->assertStatus(403);
 

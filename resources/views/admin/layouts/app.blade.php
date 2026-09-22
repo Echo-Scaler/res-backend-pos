@@ -87,12 +87,35 @@
 
         .user-role {
             font-size: 0.75rem;
-            background-color: rgba(249, 115, 22, 0.15);
-            color: var(--primary);
-            padding: 0.15rem 0.5rem;
+            padding: 0.2rem 0.65rem;
             border-radius: 9999px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .role-owner {
+            background-color: rgba(249, 115, 22, 0.15);
+            color: #fb923c;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .role-manager {
+            background-color: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .role-cashier {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .role-staff {
+            background-color: rgba(6, 182, 212, 0.15);
+            color: #67e8f9;
+            border: 1px solid rgba(6, 182, 212, 0.3);
         }
 
         .btn-logout {
@@ -143,16 +166,31 @@
 </head>
 <body>
     @auth
+    @php
+        $userRole = Auth::user()->getRoleNames()->first() ?? 'STAFF';
+        $homeRoute = match($userRole) {
+            'MANAGER' => route('manager.dashboard'),
+            'CASHIER' => route('cashier.dashboard'),
+            'STAFF' => route('staff.dashboard'),
+            default => route('admin.dashboard'),
+        };
+        $roleClass = match($userRole) {
+            'OWNER' => 'role-owner',
+            'MANAGER' => 'role-manager',
+            'CASHIER' => 'role-cashier',
+            default => 'role-staff',
+        };
+    @endphp
     <header class="navbar">
-        <a href="{{ route('admin.dashboard') }}" class="nav-brand">
+        <a href="{{ $homeRoute }}" class="nav-brand">
             <span class="nav-brand-badge">POS</span>
-            <span>{{ $restaurant->name ?? 'Restaurant Admin' }}</span>
+            <span>{{ $restaurant->name ?? 'Restaurant POS' }}</span>
         </a>
 
         <div class="nav-user">
             <div class="user-badge">
                 <span class="user-name">{{ Auth::user()->name }}</span>
-                <span class="user-role">{{ Auth::user()->getRoleNames()->first() ?? 'Staff' }}</span>
+                <span class="user-role {{ $roleClass }}">{{ $userRole }}</span>
             </div>
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
@@ -165,6 +203,14 @@
     <main class="main-content">
         @if (session('status'))
             <div class="alert alert-success">{{ session('status') }}</div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
         @if ($errors->any())

@@ -13,8 +13,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['restaurant_id', 'name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['restaurant_id', 'name', 'email', 'phone', 'password', 'pin_code'])]
+#[Hidden(['password', 'pin_code', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -30,6 +30,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'pin_code' => 'hashed',
         ];
     }
 

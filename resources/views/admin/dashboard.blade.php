@@ -109,11 +109,15 @@
         position: relative;
         overflow: hidden;
         transition: all 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
     }
 
     .module-card:hover {
         border-color: var(--primary);
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
     }
 
     .module-icon {
@@ -255,7 +259,7 @@
         <span class="module-action">Permitted for {{ $user->getRoleNames()->first() }} →</span>
     </div>
 
-    <div class="module-card">
+    <a href="{{ route('admin.employees.index') }}" class="module-card">
         <div class="module-icon">👥</div>
         <h3 class="module-title">Employee Management</h3>
         @if($user->hasRole('OWNER'))
@@ -265,7 +269,7 @@
             <p class="module-desc"><strong>Staff Authority:</strong> Create and manage Cashiers and Dining Staff. (Creating or editing Managers is restricted to the Owner).</p>
             <span class="module-action" style="color: #38bdf8;">Staff Management Permitted →</span>
         @endif
-    </div>
+    </a>
 
     <div class="module-card">
         <div class="module-icon">🪑</div>
