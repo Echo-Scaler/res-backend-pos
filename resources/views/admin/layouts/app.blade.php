@@ -6,10 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') - Restaurant POS Management</title>
     
-    <!-- Google Font: Plus Jakarta Sans -->
+    <!-- Google Font: Mada -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mada:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Tabler Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
@@ -19,81 +19,121 @@
 
     <style>
         :root {
-            --bg-body: #f4f6f9;
+            /* Exact Soft Ambient Light Palette */
+            --bg-body: #f8fafc;
             --bg-header: #ffffff;
             --bg-sidebar: #ffffff;
             --bg-card: #ffffff;
-            --bg-hover: #f8fafc;
+            --bg-card-tint: #eef3e8;
+            --bg-hover: #f1f5f9;
+            --bg-card-hover: #ffffff;
+            
             --border-color: #e2e8f0;
-            --border-subtle: #f1f5f9;
+            --border-subtle: #edf2f7;
             --border: #e2e8f0;
-            --bg-card-hover: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --text-light: #94a3b8;
             
-            --primary: #ea580c;
-            --primary-hover: #c2410c;
-            --primary-light: #ffedd5;
-            --primary-rgb: 234, 88, 12;
+            --text-main: #0e2617;
+            --text-muted: #384d3b;
+            --text-light: #4d6350;
+            --link-color: #245719;
+            --link-hover: #14380f;
             
-            --secondary: #475569;
-            --success: #10b981;
-            --success-light: #d1fae5;
-            --warning: #f59e0b;
-            --warning-light: #fef3c7;
-            --danger: #ef4444;
-            --danger-light: #fee2e2;
-            --info: #0284c7;
-            --info-light: #e0f2fe;
-            --violet: #8b5cf6;
-            --violet-light: #ede9fe;
+            --primary: #9ec63b;
+            --primary-hover: #8bb42c;
+            --primary-light: #e4ebd7;
+            --primary-rgb: 158, 198, 59;
+            
+            --dark-forest: #0c2617;
+            --olive-green: #5c8623;
+            --lime-green: #9ec63b;
+            --sage-tint: #e4ebd7;
+            
+            --secondary: #122a1b;
+            --success: #7ea826;
+            --success-light: #e4ebd7;
+            --warning: #b59325;
+            --warning-light: #faf5d8;
+            --danger: #d44c45;
+            --danger-light: #fdeeed;
+            --info: #5c8623;
+            --info-light: #e4ebd7;
+            --violet: #122a1b;
+            --violet-light: #e4ebd7;
             
             --sidebar-width: 260px;
             --sidebar-collapsed-width: 76px;
             --header-height: 68px;
             --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(14, 38, 23, 0.04);
+            --shadow-md: 0 4px 12px -2px rgba(14, 38, 23, 0.06);
+            --shadow-lg: 0 12px 24px -4px rgba(14, 38, 23, 0.08);
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
-            --bg-body: #0b0f19;
-            --bg-header: #111827;
-            --bg-sidebar: #111827;
-            --bg-card: #151d2e;
-            --bg-hover: #1e293b;
-            --border-color: #243048;
-            --border-subtle: #192438;
-            --text-main: #f8fafc;
+            /* Modern Obsidian / Dark Slate Theme Palette */
+            --bg-body: #0b0f17;
+            --bg-header: #111724;
+            --bg-sidebar: #111724;
+            --bg-card: #161e2e;
+            --bg-card-tint: #1c2638;
+            --bg-hover: #1c263a;
+            --bg-card-hover: #1a2335;
+            
+            --border-color: #222d42;
+            --border-subtle: #192233;
+            --border: #222d42;
+            
+            --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --text-light: #64748b;
-            --primary-light: rgba(234, 88, 12, 0.15);
-            --success-light: rgba(16, 185, 129, 0.15);
-            --warning-light: rgba(245, 158, 11, 0.15);
+            --link-color: #9ec63b;
+            --link-hover: #bef264;
+            
+            --primary: #9ec63b;
+            --primary-hover: #b2dc47;
+            --primary-light: rgba(158, 198, 59, 0.15);
+            --primary-rgb: 158, 198, 59;
+            
+            --dark-forest: #0b0f17;
+            --olive-green: #7ea826;
+            --lime-green: #9ec63b;
+            --sage-tint: rgba(158, 198, 59, 0.15);
+            
+            --secondary: #161e2e;
+            --success: #22c55e;
+            --success-light: rgba(34, 197, 94, 0.15);
+            --warning: #eab308;
+            --warning-light: rgba(234, 179, 8, 0.15);
+            --danger: #ef4444;
             --danger-light: rgba(239, 68, 68, 0.15);
-            --info-light: rgba(2, 132, 199, 0.15);
-            --violet-light: rgba(139, 92, 246, 0.15);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --info: #38bdf8;
+            --info-light: rgba(56, 189, 248, 0.15);
+            --violet: #a855f7;
+            --violet-light: rgba(168, 85, 247, 0.15);
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.7);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: "Mada", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
+            font-size: 15px;
+            line-height: 1.5;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
@@ -146,13 +186,13 @@
             width: 38px;
             height: 38px;
             border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), #fb923c);
-            color: #fff;
+            background: linear-gradient(135deg, var(--primary), var(--olive-green));
+            color: var(--dark-forest);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
-            box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.35);
+            box-shadow: 0 4px 10px rgba(158, 198, 59, 0.25);
         }
 
         .header-center {
@@ -185,9 +225,9 @@
         }
 
         .btn-new-order-quick {
-            background-color: var(--primary);
+            background-color: #0c2617;
             color: #ffffff;
-            border: none;
+            border: 1px solid #0c2617;
             border-radius: 9999px;
             padding: 0.45rem 1.15rem;
             font-size: 0.85rem;
@@ -197,12 +237,13 @@
             gap: 0.4rem;
             text-decoration: none;
             cursor: pointer;
-            box-shadow: 0 3px 8px rgba(var(--primary-rgb), 0.3);
+            box-shadow: 0 3px 8px rgba(12, 38, 23, 0.2);
             transition: var(--transition);
         }
 
         .btn-new-order-quick:hover {
-            background-color: var(--primary-hover);
+            background-color: #1a422b;
+            color: #ffffff;
             transform: translateY(-1px);
         }
 
@@ -479,14 +520,25 @@
         }
 
         .sidebar-link.active {
-            background-color: var(--primary);
+            background-color: #0c2617;
             color: #ffffff !important;
             font-weight: 700;
-            box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+            box-shadow: 0 4px 10px rgba(12, 38, 23, 0.25);
         }
 
         .sidebar-link.active i {
-            color: #ffffff !important;
+            color: #9ec63b !important;
+        }
+
+        [data-theme="dark"] .sidebar-link.active {
+            background-color: rgba(158, 198, 59, 0.16);
+            color: #f1f5f9 !important;
+            border: 1px solid rgba(158, 198, 59, 0.35);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="dark"] .sidebar-link.active i {
+            color: #bef264 !important;
         }
 
         .sidebar-badge {
@@ -495,11 +547,16 @@
             padding: 0.15rem 0.5rem;
             border-radius: 9999px;
             background-color: var(--primary-light);
-            color: var(--primary);
+            color: #0e2617;
+        }
+
+        [data-theme="dark"] .sidebar-badge {
+            background-color: rgba(158, 198, 59, 0.2);
+            color: #bef264;
         }
 
         .sidebar-link.active .sidebar-badge {
-            background-color: rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
         }
 
@@ -1095,7 +1152,11 @@
             }
         }
 
-        const savedTheme = localStorage.getItem('pos_theme') || 'light';
+        let savedTheme = localStorage.getItem('pos_theme');
+        if (!savedTheme || savedTheme === 'dark') {
+            savedTheme = 'light';
+            localStorage.setItem('pos_theme', 'light');
+        }
         setTheme(savedTheme);
 
         if (themeToggle) {

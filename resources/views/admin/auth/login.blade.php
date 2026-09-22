@@ -32,13 +32,13 @@
         justify-content: center;
         width: 60px;
         height: 60px;
-        background: linear-gradient(135deg, #f97316, #ea580c);
-        color: #fff;
+        background: linear-gradient(135deg, var(--primary), var(--olive-green));
+        color: var(--dark-forest);
         font-size: 1.75rem;
         font-weight: 800;
         border-radius: 14px;
         margin-bottom: 1rem;
-        box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+        box-shadow: 0 10px 15px -3px rgba(158, 198, 59, 0.25);
     }
 
     .login-title {
@@ -61,14 +61,14 @@
         display: block;
         font-size: 0.85rem;
         font-weight: 600;
-        color: #cbd5e1;
+        color: var(--text-muted);
         margin-bottom: 0.5rem;
     }
 
     .form-input {
         width: 100%;
         padding: 0.8rem 1rem;
-        background-color: #0f172a;
+        background-color: var(--bg-body);
         border: 1px solid var(--border);
         border-radius: 10px;
         color: var(--text-main);
@@ -79,7 +79,7 @@
     .form-input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        box-shadow: 0 0 0 3px rgba(158, 198, 59, 0.2);
     }
 
     .form-options {
@@ -101,19 +101,19 @@
     .btn-submit {
         width: 100%;
         padding: 0.9rem;
-        background: linear-gradient(135deg, #f97316, #ea580c);
-        color: #fff;
+        background: var(--primary);
+        color: var(--dark-forest);
         border: none;
         border-radius: 10px;
         font-size: 1rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.25);
+        box-shadow: 0 4px 10px rgba(158, 198, 59, 0.25);
     }
 
     .btn-submit:hover {
-        background: linear-gradient(135deg, #ea580c, #c2410c);
+        background: var(--primary-hover);
         transform: translateY(-1px);
     }
 

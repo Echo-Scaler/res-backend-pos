@@ -27,6 +27,10 @@ class OwnerDashboardMetricsService
             'sales_by_category' => $this->getSalesByCategory($restaurant),
             'table_occupancy' => $this->getTableOccupancy($restaurant),
             'recent_orders' => $this->getRecentOrders($restaurant),
+            'total_guests' => $this->getTotalGuestsCount($restaurant),
+            'table_turnover_rate' => $this->getTableTurnoverRate($restaurant),
+            'avg_kitchen_prep_time' => $this->getAvgKitchenPrepTime($restaurant),
+            'cash_drawer_balance' => $this->getCashDrawerBalance($restaurant),
             'featured_dish' => $this->getFeaturedDish($restaurant),
             'floor_tables' => $this->getFloorTables($restaurant),
         ];
@@ -428,5 +432,37 @@ class OwnerDashboardMetricsService
             ['id' => 'T-07', 'name' => 'Table 07', 'capacity' => '8 Pax', 'status' => 'OCCUPIED', 'server' => 'Aung Aung', 'orders_count' => 8, 'spent' => '142,000 MMK', 'elapsed' => '45 min'],
             ['id' => 'T-08', 'name' => 'Table 08', 'capacity' => '4 Pax', 'status' => 'AVAILABLE', 'server' => '-', 'orders_count' => 0, 'spent' => '0 MMK', 'elapsed' => '-'],
         ];
+    }
+
+    /**
+     * 15. Total guest covers served today.
+     */
+    public function getTotalGuestsCount(Restaurant $restaurant): int
+    {
+        return 248;
+    }
+
+    /**
+     * 16. Table turnover rate (turns per table today).
+     */
+    public function getTableTurnoverRate(Restaurant $restaurant): float
+    {
+        return 3.6;
+    }
+
+    /**
+     * 17. Average kitchen preparation / ticket fulfillment speed in minutes.
+     */
+    public function getAvgKitchenPrepTime(Restaurant $restaurant): float
+    {
+        return 12.5;
+    }
+
+    /**
+     * 18. Cash register drawer float & session balance in MMK.
+     */
+    public function getCashDrawerBalance(Restaurant $restaurant): int
+    {
+        return 435000;
     }
 }
