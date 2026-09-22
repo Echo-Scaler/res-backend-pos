@@ -5,7 +5,7 @@
 @push('styles')
 <style>
     .form-container {
-        max-width: 680px;
+        max-width: 820px;
         margin: 0 auto;
     }
 
@@ -124,6 +124,128 @@
     .role-label-desc {
         font-size: 0.75rem;
         color: var(--text-muted);
+    }
+
+    /* Custom Direct Permission Overrides Styling */
+    .perm-override-container {
+        margin-top: 2rem;
+        padding-top: 1.75rem;
+        border-top: 1px dashed var(--border);
+    }
+
+    .perm-override-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .perm-override-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #f8fafc;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .perm-override-desc {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin-top: 0.35rem;
+        line-height: 1.4;
+    }
+
+    .perm-group-card {
+        background-color: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .perm-group-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: #cbd5e1;
+        margin-bottom: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .perm-override-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .perm-override-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 0.85rem;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        transition: all 0.15s ease;
+    }
+
+    .perm-override-item:hover {
+        border-color: rgba(249, 115, 22, 0.4);
+    }
+
+    .perm-override-checkbox {
+        margin-top: 0.2rem;
+        width: 1.1rem;
+        height: 1.1rem;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .perm-override-checkbox:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .perm-override-content {
+        flex: 1;
+    }
+
+    .perm-override-name {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        display: block;
+    }
+
+    .perm-override-desc-text {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.15rem;
+        display: block;
+        line-height: 1.35;
+    }
+
+    .badge-role-inherited {
+        font-size: 0.68rem;
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 4px;
+        padding: 0.15rem 0.45rem;
+        display: inline-block;
+        margin-top: 0.35rem;
+        font-weight: 600;
+    }
+
+    .badge-custom-granted {
+        font-size: 0.68rem;
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 4px;
+        padding: 0.15rem 0.45rem;
+        display: inline-block;
+        margin-top: 0.35rem;
+        font-weight: 600;
     }
 
     .btn-submit {
@@ -247,6 +369,68 @@
                 </div>
             </div>
 
+            @if(isset($currentUser) && $currentUser->hasRole('OWNER') && $employee->hasAnyRole(['CASHIER', 'STAFF']))
+            <div class="perm-override-container" id="direct-permissions-section">
+                <input type="hidden" name="direct_permissions_override_submitted" value="1">
+                <div class="perm-override-header">
+                    <div class="perm-override-title">
+                        <span>🛡️ User-Level Direct Permission Overrides</span>
+                    </div>
+                    <p class="perm-override-desc">
+                        Grant or revoke direct individual permissions for <strong>{{ $employee->name }}</strong> without changing their base role (<strong>{{ $employee->getRoleNames()->first() ?? 'STAFF' }}</strong>).
+                        (Applicable exclusively to Cashier and Staff operations). Permissions inherited from the assigned role are automatically active. You can grant extra operational privileges (e.g. allowing a trusted Cashier to apply custom discounts or manage inventory) below.
+                    </p>
+                </div>
+
+                @if(isset($permissionGroups) && count($permissionGroups) > 0)
+                    @foreach($permissionGroups as $groupName => $groupPerms)
+                        <div class="perm-group-card">
+                            <div class="perm-group-title">
+                                @php
+                                    $groupIcon = match($groupName) {
+                                        'Menu, Catalog & Categories' => '🍔',
+                                        'Inventory & Stocks' => '📦',
+                                        'Discounts & Customer Coupons' => '🏷️',
+                                        'Tables & Dining Floor' => '🪑',
+                                        'Orders & Kitchen Operations' => '🧾',
+                                        'Billing & Financial Sessions' => '💳',
+                                        'Staff & Security Governance' => '👥',
+                                        'Financials & Executive Governance' => '📈',
+                                        default => '⚙️',
+                                    };
+                                @endphp
+                                <span>{{ $groupIcon }} {{ $groupName }}</span>
+                            </div>
+                            <div class="perm-override-grid">
+                                @foreach($groupPerms as $permName => $permDesc)
+                                    @php
+                                        $isRoleInherited = in_array($permName, $rolePermissions ?? []);
+                                        $isDirectGranted = in_array($permName, $directPermissions ?? []);
+                                    @endphp
+                                    <label class="perm-override-item" for="perm_{{ \Illuminate\Support\Str::slug($permName) }}">
+                                        @if($isRoleInherited)
+                                            <input type="checkbox" id="perm_{{ \Illuminate\Support\Str::slug($permName) }}" checked disabled class="perm-override-checkbox">
+                                        @else
+                                            <input type="checkbox" id="perm_{{ \Illuminate\Support\Str::slug($permName) }}" name="direct_permissions[]" value="{{ $permName }}" {{ $isDirectGranted ? 'checked' : '' }} class="perm-override-checkbox">
+                                        @endif
+                                        <div class="perm-override-content">
+                                            <span class="perm-override-name">{{ $permName }}</span>
+                                            <span class="perm-override-desc-text">{{ $permDesc }}</span>
+                                            @if($isRoleInherited)
+                                                <span class="badge-role-inherited">🔵 Active by Base Role</span>
+                                            @elseif($isDirectGranted)
+                                                <span class="badge-custom-granted">🟢 Custom User Override</span>
+                                            @endif
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+            @endif
+
             <div class="form-actions">
                 <button type="submit" class="btn-submit">Update Employee</button>
                 <a href="{{ route('admin.employees.index') }}" class="btn-cancel">Cancel</a>
@@ -255,3 +439,24 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const permSection = document.getElementById('direct-permissions-section');
+
+        if (permSection) {
+            roleInputs.forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    if (this.value === 'CASHIER' || this.value === 'STAFF') {
+                        permSection.style.display = 'block';
+                    } else {
+                        permSection.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+@endpush
