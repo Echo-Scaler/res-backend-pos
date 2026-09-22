@@ -114,9 +114,17 @@ class AdminDashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Rangoon Spice Kitchen');
         $response->assertSee('Restaurant Owner');
-        $response->assertSee('Owner Authority Active');
-        $response->assertSee('Unrestricted (100%)');
-        $response->assertSee('Full Control (Owner Only)');
+        $response->assertSee('Admin Executive Dashboard');
+        $response->assertSee('Welcome back');
+        $response->assertSee('Total Guests (Covers)');
+        $response->assertSee('Table Turnover Rate');
+        $response->assertSee('Kitchen Prep Speed');
+        $response->assertSee('Cash Drawer Balance');
+
+        // Test interactive calendar date picker filter
+        $dateResponse = $this->actingAs($this->owner)->get('/admin/dashboard?date=2026-09-25');
+        $dateResponse->assertStatus(200);
+        $dateResponse->assertSee('25 Sep 2026');
     }
 
     public function test_manager_cashier_and_staff_are_denied_access_to_owner_dashboard(): void
