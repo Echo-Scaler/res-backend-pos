@@ -85,6 +85,31 @@ class Restaurant extends Model
         return $this->hasMany(Expense::class);
     }
 
+    public function expenseCategories(): HasMany
+    {
+        return $this->hasMany(ExpenseCategory::class);
+    }
+
+    public function vendors(): HasMany
+    {
+        return $this->hasMany(Vendor::class);
+    }
+
+    public function recurringExpenses(): HasMany
+    {
+        return $this->hasMany(RecurringExpense::class);
+    }
+
+    public function expenseBudgets(): HasMany
+    {
+        return $this->hasMany(ExpenseBudget::class);
+    }
+
+    public function expenseTransactions(): HasMany
+    {
+        return $this->hasMany(ExpenseTransaction::class);
+    }
+
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);
