@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\EmployeeController;
 use App\Http\Controllers\Web\InventoryController;
 use App\Http\Controllers\Web\MenuController;
 use App\Http\Controllers\Web\PromotionController;
+use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\RoleDashboardController;
 use App\Http\Controllers\Web\RolePermissionController;
 use Illuminate\Support\Facades\Route;
@@ -35,7 +36,9 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/orders', [AdminModuleController::class, 'show'])->defaults('module', 'orders')->name('orders.index');
     Route::get('/payments', [AdminModuleController::class, 'show'])->defaults('module', 'payments')->name('payments.index');
     Route::get('/customers', [AdminModuleController::class, 'show'])->defaults('module', 'customers')->name('customers.index');
-    Route::get('/reports', [AdminModuleController::class, 'show'])->defaults('module', 'reports')->name('reports.index');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/data', [ReportController::class, 'apiData'])->name('reports.data');
+    Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
     Route::get('/expenses', [AdminModuleController::class, 'show'])->defaults('module', 'expenses')->name('expenses.index');
     Route::get('/settings/tax', [AdminModuleController::class, 'show'])->defaults('module', 'tax-settings')->name('settings.tax');
     Route::get('/settings/business', [AdminModuleController::class, 'show'])->defaults('module', 'business-settings')->name('settings.business');

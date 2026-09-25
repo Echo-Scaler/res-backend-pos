@@ -1491,7 +1491,7 @@
         <div class="card-body">
             <div class="kpi-card-header">
                 <div class="kpi-avatar-icon kpi-avatar-green">
-                    <i class="ti ti-currency-dollar"></i>
+                    <i class="ti ti-cash"></i>
                 </div>
                 <span class="kpi-title-text">Today's Sales</span>
             </div>
