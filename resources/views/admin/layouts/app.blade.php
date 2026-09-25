@@ -768,6 +768,78 @@
                 padding: 0.75rem 0.5rem 1.5rem;
             }
         }
+
+        /* Global Modern Pagination Component */
+        .modern-pagination-nav {
+            display: flex;
+            align-items: center;
+        }
+        .modern-pagination-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .modern-pagination-list .page-item {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .modern-pagination-list .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 34px;
+            height: 34px;
+            padding: 0 0.5rem;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: "Mada", sans-serif;
+            color: var(--text-main);
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        .modern-pagination-list .page-link:hover:not(.dots) {
+            background: var(--bg-hover);
+            border-color: #8cb829;
+            color: #8cb829;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+        }
+        .modern-pagination-list .page-item.active .page-link {
+            background: linear-gradient(135deg, #8cb829 0%, #6f9520 100%);
+            color: #ffffff;
+            border-color: #8cb829;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(140, 184, 41, 0.35);
+            cursor: default;
+            transform: none;
+        }
+        .modern-pagination-list .page-item.disabled .page-link {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background: var(--bg-body);
+            border-color: var(--border-color);
+            color: var(--text-muted);
+            transform: none;
+            box-shadow: none;
+        }
+        .modern-pagination-list .page-link.dots {
+            border: none;
+            background: transparent;
+            cursor: default;
+            color: var(--text-muted);
+            min-width: 22px;
+        }
+        .modern-pagination-list .page-arrow {
+            font-size: 0.95rem;
+        }
     </style>
     @stack('styles')
 </head>
@@ -1009,7 +1081,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.expenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.expenses.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.expenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-cash-register"></i>
                             <span>Expense Tracker</span>

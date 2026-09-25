@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\AdminAuthController;
 use App\Http\Controllers\Web\AdminDashboardController;
 use App\Http\Controllers\Web\AdminModuleController;
 use App\Http\Controllers\Web\EmployeeController;
+use App\Http\Controllers\Web\ExpenseController;
 use App\Http\Controllers\Web\InventoryController;
 use App\Http\Controllers\Web\MenuController;
 use App\Http\Controllers\Web\PromotionController;
@@ -39,7 +40,6 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/data', [ReportController::class, 'apiData'])->name('reports.data');
     Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
-    Route::get('/expenses', [AdminModuleController::class, 'show'])->defaults('module', 'expenses')->name('expenses.index');
     Route::get('/settings/tax', [AdminModuleController::class, 'show'])->defaults('module', 'tax-settings')->name('settings.tax');
     Route::get('/settings/business', [AdminModuleController::class, 'show'])->defaults('module', 'business-settings')->name('settings.business');
     Route::get('/audit-logs', [AdminModuleController::class, 'show'])->defaults('module', 'audit-logs')->name('audit.logs');
@@ -49,6 +49,32 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
 // Operations Management: Accessible by OWNER & MANAGER
 Route::middleware(['auth', 'role:OWNER|MANAGER'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('employees', EmployeeController::class);
+
+    // Expense Management Module
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::get('/expenses/reports', [ExpenseController::class, 'reports'])->name('expenses.reports');
+    Route::get('/expenses/export', [ExpenseController::class, 'exportCsv'])->name('expenses.export');
+    Route::get('/expenses/categories', [ExpenseController::class, 'categories'])->name('expenses.categories');
+    Route::post('/expenses/categories', [ExpenseController::class, 'storeCategory'])->name('expenses.categories.store');
+    Route::put('/expenses/categories/{category}', [ExpenseController::class, 'updateCategory'])->name('expenses.categories.update');
+    Route::get('/expenses/vendors', [ExpenseController::class, 'vendors'])->name('expenses.vendors');
+    Route::post('/expenses/vendors', [ExpenseController::class, 'storeVendor'])->name('expenses.vendors.store');
+    Route::put('/expenses/vendors/{vendor}', [ExpenseController::class, 'updateVendor'])->name('expenses.vendors.update');
+    Route::get('/expenses/budgets', [ExpenseController::class, 'budgets'])->name('expenses.budgets');
+    Route::post('/expenses/budgets', [ExpenseController::class, 'storeBudget'])->name('expenses.budgets.store');
+    Route::get('/expenses/recurring', [ExpenseController::class, 'recurring'])->name('expenses.recurring');
+    Route::post('/expenses/recurring', [ExpenseController::class, 'storeRecurring'])->name('expenses.recurring.store');
+    Route::post('/expenses/recurring/trigger', [ExpenseController::class, 'triggerRecurring'])->name('expenses.recurring.trigger');
+    Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->name('expenses.show');
+    Route::get('/expenses/{expense}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
+    Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
+    Route::post('/expenses/{expense}/submit', [ExpenseController::class, 'submit'])->name('expenses.submit');
+    Route::post('/expenses/{expense}/approve', [ExpenseController::class, 'approve'])->name('expenses.approve');
+    Route::post('/expenses/{expense}/reject', [ExpenseController::class, 'reject'])->name('expenses.reject');
+    Route::post('/expenses/{expense}/pay', [ExpenseController::class, 'pay'])->name('expenses.pay');
+    Route::post('/expenses/{expense}/void', [ExpenseController::class, 'void'])->name('expenses.void');
 
     // Menu & Products
     Route::get('/menu', [MenuController::class, 'index'])->name('menu.index');
