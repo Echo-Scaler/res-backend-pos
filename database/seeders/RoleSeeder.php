@@ -34,6 +34,18 @@ class RoleSeeder extends Seeder
             'pos-checkout',
             'take-orders',
             'apply-discounts',
+
+            // Expense & Financial Control
+            'view-expenses',
+            'create-expenses',
+            'edit-expenses',
+            'approve-expenses',
+            'pay-expenses',
+            'void-expenses',
+            'manage-expense-categories',
+            'manage-vendors',
+            'manage-budgets',
+            'view-expense-reports',
         ];
 
         foreach ($permissions as $permission) {
@@ -49,25 +61,39 @@ class RoleSeeder extends Seeder
         // 1. OWNER: Full control over everything
         $ownerRole->syncPermissions(Permission::all());
 
-        // 2. MANAGER: Supervise operations - menu, tables, inventory, promotions, and staff (Cashier & Staff)
+        // 2. MANAGER: Supervise operations, inventory, promotions, staff, and expenses
         $managerRole->syncPermissions([
             'manage-menu',
             'manage-tables',
             'manage-inventory',
             'manage-promotions',
             'manage-staff',
+            'view-expenses',
+            'create-expenses',
+            'edit-expenses',
+            'approve-expenses',
+            'pay-expenses',
+            'void-expenses',
+            'manage-expense-categories',
+            'manage-vendors',
+            'manage-budgets',
+            'view-expense-reports',
         ]);
 
-        // 3. CASHIER: POS checkout, taking orders, and applying approved discounts
+        // 3. CASHIER: POS checkout, orders, discounts, and petty cash expense logging
         $cashierRole->syncPermissions([
             'pos-checkout',
             'take-orders',
             'apply-discounts',
+            'view-expenses',
+            'create-expenses',
         ]);
 
-        // 4. STAFF: Taking orders only
+        // 4. STAFF: Taking orders and submission of staff expenses
         $staffRole->syncPermissions([
             'take-orders',
+            'view-expenses',
+            'create-expenses',
         ]);
     }
 }

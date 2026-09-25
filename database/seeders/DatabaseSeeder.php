@@ -70,5 +70,8 @@ class DatabaseSeeder extends Seeder
                 $user->syncRoles([$userData['role']]);
             }
         }
+
+        // 4. Seed Expense Categories, Vendors, and Budgets
+        $this->call(ExpenseSeeder::class);
     }
 }
