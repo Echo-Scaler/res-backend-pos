@@ -28,6 +28,10 @@ class Order extends Model
         'refund_amount',
         'outstanding_amount',
         'status',
+        'kitchen_status',
+        'reprint_count',
+        'verified_at',
+        'verified_by',
         'payment_status',
         'cancellation_reason',
         'cancelled_at',
@@ -49,7 +53,9 @@ class Order extends Model
             'refund_amount' => 'integer',
             'outstanding_amount' => 'integer',
             'guest_count' => 'integer',
+            'reprint_count' => 'integer',
             'cancelled_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -76,5 +82,17 @@ class Order extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function incrementReprintCount(): int
+    {
+        $this->increment('reprint_count');
+
+        return $this->reprint_count;
     }
 }

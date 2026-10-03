@@ -73,5 +73,8 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed Expense Categories, Vendors, and Budgets
         $this->call(ExpenseSeeder::class);
+
+        // 5. Seed Dining Tables & QR Codes
+        $this->call(DiningTableSeeder::class);
     }
 }
