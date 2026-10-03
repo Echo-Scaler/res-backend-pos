@@ -15,6 +15,7 @@ class OrderItem extends Model
         'product_id',
         'category_id',
         'item_name',
+        'special_notes',
         'is_alcohol',
         'quantity',
         'unit_price',
@@ -22,6 +23,8 @@ class OrderItem extends Model
         'subtotal',
         'profit',
         'is_voided',
+        'is_cooked',
+        'is_verified',
         'void_reason',
         'voided_by',
         'created_at',
@@ -33,12 +36,24 @@ class OrderItem extends Model
         return [
             'is_alcohol' => 'boolean',
             'is_voided' => 'boolean',
+            'is_cooked' => 'boolean',
+            'is_verified' => 'boolean',
             'quantity' => 'integer',
             'unit_price' => 'integer',
             'cost_price' => 'integer',
             'subtotal' => 'integer',
             'profit' => 'integer',
         ];
+    }
+
+    public function getPriceAttribute(): int|float
+    {
+        return $this->unit_price;
+    }
+
+    public function setPriceAttribute($value): void
+    {
+        $this->attributes['unit_price'] = $value;
     }
 
     public function order(): BelongsTo

@@ -3,14 +3,20 @@
 use App\Http\Controllers\Web\AdminAuthController;
 use App\Http\Controllers\Web\AdminDashboardController;
 use App\Http\Controllers\Web\AdminModuleController;
+use App\Http\Controllers\Web\CashDrawerController;
+use App\Http\Controllers\Web\CashierCheckoutController;
+use App\Http\Controllers\Web\CustomerOrderController;
+use App\Http\Controllers\Web\DiningTableController;
 use App\Http\Controllers\Web\EmployeeController;
 use App\Http\Controllers\Web\ExpenseController;
 use App\Http\Controllers\Web\InventoryController;
 use App\Http\Controllers\Web\MenuController;
+use App\Http\Controllers\Web\OrderVerificationController;
 use App\Http\Controllers\Web\PromotionController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\RoleDashboardController;
 use App\Http\Controllers\Web\RolePermissionController;
+use App\Http\Controllers\Web\StaffFloorController;
 use Illuminate\Support\Facades\Route;
 
 // Root route redirects to role dashboard if authenticated, or login
@@ -33,8 +39,6 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles.permissions');
     Route::post('/roles-permissions/update-role', [RolePermissionController::class, 'updateRole'])->name('roles.permissions.updateRole');
     Route::post('/roles-permissions/toggle-permission', [RolePermissionController::class, 'togglePermission'])->name('roles.permissions.togglePermission');
-    Route::get('/tables', [AdminModuleController::class, 'show'])->defaults('module', 'tables')->name('tables.index');
-    Route::get('/orders', [AdminModuleController::class, 'show'])->defaults('module', 'orders')->name('orders.index');
     Route::get('/payments', [AdminModuleController::class, 'show'])->defaults('module', 'payments')->name('payments.index');
     Route::get('/customers', [AdminModuleController::class, 'show'])->defaults('module', 'customers')->name('customers.index');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
@@ -97,7 +101,35 @@ Route::middleware(['auth', 'role:OWNER|MANAGER'])->prefix('admin')->name('admin.
     Route::put('/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
     Route::post('/promotions/{promotion}/toggle', [PromotionController::class, 'toggleActive'])->name('promotions.toggle');
     Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
+
+    // Dining Tables & Dynamic QR Code Management (Saizeriya Floor Operations)
+    Route::get('/tables', [DiningTableController::class, 'index'])->name('tables.index');
+    Route::post('/tables', [DiningTableController::class, 'store'])->name('tables.store');
+    Route::get('/tables/batch-print', [DiningTableController::class, 'batchPrintStands'])->name('tables.batch-print');
+    Route::get('/tables/{table}', [DiningTableController::class, 'show'])->name('tables.show');
+    Route::put('/tables/{table}', [DiningTableController::class, 'update'])->name('tables.update');
+    Route::patch('/tables/{table}/status', [DiningTableController::class, 'updateStatus'])->name('tables.updateStatus');
+    Route::post('/tables/{table}/regenerate-qr', [DiningTableController::class, 'regenerateQr'])->name('tables.regenerateQr');
+    Route::get('/tables/{table}/print-stand', [DiningTableController::class, 'printStand'])->name('tables.print-stand');
+    Route::post('/tables/{table}/transfer', [DiningTableController::class, 'transfer'])->name('tables.transfer');
+    Route::delete('/tables/{table}', [DiningTableController::class, 'destroy'])->name('tables.destroy');
 });
+
+// Operations Management: Order Verification & Expediter Pass (Accessible by OWNER, MANAGER, CASHIER, STAFF)
+Route::middleware(['auth', 'role:OWNER|MANAGER|CASHIER|STAFF'])->prefix('admin/orders')->name('admin.orders.')->group(function () {
+    Route::get('/', [OrderVerificationController::class, 'index'])->name('index');
+    Route::get('/verification', [OrderVerificationController::class, 'index'])->name('verification');
+    Route::post('/{order}/verify', [OrderVerificationController::class, 'verify'])->name('verify');
+    Route::post('/{order}/reprint', [OrderVerificationController::class, 'reprint'])->name('reprint');
+    Route::get('/{order}/print-kitchen-chit', [OrderVerificationController::class, 'printKitchenChit'])->name('printKitchenChit');
+    Route::get('/{order}/print-customer-bill', [OrderVerificationController::class, 'printCustomerBill'])->name('printCustomerBill');
+    Route::get('/{order}/print-both-slips', [OrderVerificationController::class, 'printBothSlips'])->name('printBothSlips');
+    Route::post('/simulate', [CustomerOrderController::class, 'simulate'])->name('simulate');
+});
+
+// Customer Mobile QR Scan Routes (Public Web Menu & Self-Ordering)
+Route::get('/order/table/{qr_token}', [CustomerOrderController::class, 'show'])->name('customer.order.table');
+Route::post('/order/table/{qr_token}', [CustomerOrderController::class, 'store'])->name('customer.order.submit');
 
 // 2. MANAGER Operations & Floor Management Portal
 Route::middleware(['auth', 'role:OWNER|MANAGER'])->prefix('manager')->name('manager.')->group(function () {
@@ -112,7 +144,16 @@ Route::middleware(['auth', 'role:OWNER|MANAGER|CASHIER'])->prefix('cashier')->na
     Route::get('/', function () {
         return redirect()->route('cashier.dashboard');
     });
-    Route::get('/dashboard', [RoleDashboardController::class, 'cashierIndex'])->name('dashboard');
+    Route::get('/dashboard', [CashierCheckoutController::class, 'index'])->name('dashboard');
+    Route::get('/orders/{order}/details', [CashierCheckoutController::class, 'getOrderDetails'])->name('orders.details');
+    Route::post('/orders/{order}/settle', [CashierCheckoutController::class, 'settleOrder'])->name('orders.settle');
+    Route::get('/orders/{order}/receipt', [CashierCheckoutController::class, 'printReceipt'])->name('orders.receipt');
+
+    // Cash Drawer Shift Sessions
+    Route::post('/shift/open', [CashDrawerController::class, 'openShift'])->name('shift.open');
+    Route::post('/shift/cash-in-out', [CashDrawerController::class, 'cashInOut'])->name('shift.cashInOut');
+    Route::post('/shift/close', [CashDrawerController::class, 'closeShift'])->name('shift.close');
+    Route::get('/shift/{session}/z-report', [CashDrawerController::class, 'printZReport'])->name('shift.zReport');
 });
 
 // 4. STAFF / Waiter Floor Ordering Portal
@@ -120,5 +161,8 @@ Route::middleware(['auth', 'role:OWNER|MANAGER|STAFF'])->prefix('staff')->name('
     Route::get('/', function () {
         return redirect()->route('staff.dashboard');
     });
-    Route::get('/dashboard', [RoleDashboardController::class, 'staffIndex'])->name('dashboard');
+    Route::get('/dashboard', [StaffFloorController::class, 'index'])->name('dashboard');
+    Route::post('/orders', [StaffFloorController::class, 'storeOrder'])->name('orders.store');
+    Route::post('/orders/{order}/add-items', [StaffFloorController::class, 'addItems'])->name('orders.addItems');
+    Route::post('/tables/request-bill', [StaffFloorController::class, 'requestBill'])->name('tables.requestBill');
 });

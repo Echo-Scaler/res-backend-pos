@@ -140,6 +140,66 @@
             transition: background-color var(--transition);
         }
 
+        /* Global Modern Buttons */
+        .btn-modern-primary {
+            background-color: var(--primary, #9ec63b);
+            color: #0f172a !important;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.875rem;
+            padding: 0.65rem 1.35rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            box-shadow: 0 4px 14px rgba(158, 198, 59, 0.32);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            line-height: 1.4;
+        }
+
+        .btn-modern-primary:hover {
+            background-color: var(--primary-hover, #8bb42c);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(158, 198, 59, 0.42);
+            color: #0f172a !important;
+        }
+
+        .btn-modern-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-modern-secondary {
+            background-color: var(--bg-card);
+            color: var(--text-main) !important;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.875rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            line-height: 1.4;
+        }
+
+        .btn-modern-secondary:hover {
+            background-color: var(--bg-hover);
+            border-color: var(--primary, #9ec63b);
+            color: var(--primary, #9ec63b) !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-modern-secondary:active {
+            transform: translateY(0);
+        }
+
         /* PreAdmin Main Shell */
         .main-wrapper {
             display: flex;
@@ -1044,12 +1104,11 @@
             <div class="sidebar-section-title">Orders & Dining</div>
             <ul class="sidebar-nav-list">
                 <li>
-                    <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.index') ? 'active' : '' }}">
+                    <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-receipt"></i>
-                            <span>Live Orders</span>
+                            <span>Kitchen Pass & Check</span>
                         </div>
-                        <span class="sidebar-badge">8</span>
                     </a>
                 </li>
                 <li>

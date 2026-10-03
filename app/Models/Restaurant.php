@@ -114,4 +114,9 @@ class Restaurant extends Model
     {
         return $this->hasMany(AuditLog::class);
     }
+
+    public function diningTables(): HasMany
+    {
+        return $this->hasMany(DiningTable::class);
+    }
 }

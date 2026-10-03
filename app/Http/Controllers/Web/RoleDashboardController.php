@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\CashDrawerSession;
+use App\Models\DiningTable;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -16,13 +19,35 @@ class RoleDashboardController extends Controller
         $user = $request->user();
         $restaurant = $user->restaurant;
 
+        $tablesCount = DiningTable::where('restaurant_id', $restaurant->id)->count();
+        $activeTables = DiningTable::where('restaurant_id', $restaurant->id)
+            ->whereIn('status', ['OCCUPIED', 'BILLING'])
+            ->count();
+
+        $activeShifts = CashDrawerSession::where('restaurant_id', $restaurant->id)
+            ->where('status', 'OPEN')
+            ->count();
+
+        $todaySales = Order::where('restaurant_id', $restaurant->id)
+            ->whereDate('created_at', today())
+            ->where('status', 'COMPLETED')
+            ->sum('total_amount');
+
+        $pendingKitchen = Order::where('restaurant_id', $restaurant->id)
+            ->whereDate('created_at', today())
+            ->whereIn('kitchen_status', ['PENDING_COOK', 'RECEIVED', 'PREPARING'])
+            ->count();
+
         $stats = [
             'total_staff' => $restaurant ? $restaurant->users()->whereHas('roles', function ($q) {
                 $q->whereIn('name', ['CASHIER', 'STAFF']);
             })->count() : 0,
-            'floor_status' => 'Active Shifts Running',
+            'floor_status' => $activeShifts > 0 ? "{$activeShifts} Shifts Active" : 'Shift Closed',
+            'tables_count' => $tablesCount,
+            'active_tables' => $activeTables,
+            'today_sales' => number_format($todaySales, 0).' MMK',
+            'pending_kitchen' => $pendingKitchen,
             'pending_voids' => 0,
-            'tables_count' => 24,
         ];
 
         return view('admin.roles.manager', compact('user', 'restaurant', 'stats'));
@@ -31,44 +56,16 @@ class RoleDashboardController extends Controller
     /**
      * Display the Cashier Register & Checkout Dashboard.
      */
-    public function cashierIndex(Request $request): View
+    public function cashierIndex(Request $request)
     {
-        $user = $request->user();
-        $restaurant = $user->restaurant;
-
-        $register = [
-            'status' => 'OPEN',
-            'terminal_id' => 'POS-REG-01',
-            'opening_balance' => '150,000 MMK',
-            'current_sales' => '485,000 MMK',
-            'transactions_count' => 18,
-        ];
-
-        return view('admin.roles.cashier', compact('user', 'restaurant', 'register'));
+        return app(CashierCheckoutController::class)->index($request);
     }
 
     /**
      * Display the Waiter / Floor Staff Dashboard.
      */
-    public function staffIndex(Request $request): View
+    public function staffIndex(Request $request)
     {
-        $user = $request->user();
-        $restaurant = $user->restaurant;
-
-        $floor = [
-            'assigned_zone' => 'Zone A (Main Dining)',
-            'active_tables' => 6,
-            'ready_pickup_orders' => 2,
-            'table_list' => [
-                ['number' => 'T-01', 'status' => 'occupied', 'guests' => 4, 'time' => '35m ago'],
-                ['number' => 'T-02', 'status' => 'vacant', 'guests' => 0, 'time' => 'Available'],
-                ['number' => 'T-03', 'status' => 'billing', 'guests' => 2, 'time' => '50m ago'],
-                ['number' => 'T-04', 'status' => 'occupied', 'guests' => 6, 'time' => '15m ago'],
-                ['number' => 'T-05', 'status' => 'vacant', 'guests' => 0, 'time' => 'Available'],
-                ['number' => 'T-06', 'status' => 'occupied', 'guests' => 2, 'time' => '5m ago'],
-            ],
-        ];
-
-        return view('admin.roles.staff', compact('user', 'restaurant', 'floor'));
+        return app(StaffFloorController::class)->index($request);
     }
 }

@@ -28,10 +28,16 @@ class Order extends Model
         'refund_amount',
         'outstanding_amount',
         'status',
+        'kitchen_status',
+        'reprint_count',
+        'verified_at',
+        'verified_by',
         'payment_status',
         'cancellation_reason',
         'cancelled_at',
         'staff_id',
+        'cash_drawer_session_id',
+        'service_charge',
         'approved_by',
         'created_at',
         'updated_at',
@@ -43,13 +49,16 @@ class Order extends Model
             'subtotal' => 'integer',
             'discount_amount' => 'integer',
             'tax_amount' => 'integer',
+            'service_charge' => 'integer',
             'cogs_amount' => 'integer',
             'total_amount' => 'integer',
             'paid_amount' => 'integer',
             'refund_amount' => 'integer',
             'outstanding_amount' => 'integer',
             'guest_count' => 'integer',
+            'reprint_count' => 'integer',
             'cancelled_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
     }
 
@@ -73,8 +82,25 @@ class Order extends Model
         return $this->belongsTo(User::class, 'staff_id');
     }
 
+    public function cashDrawerSession(): BelongsTo
+    {
+        return $this->belongsTo(CashDrawerSession::class, 'cash_drawer_session_id');
+    }
+
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function verifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function incrementReprintCount(): int
+    {
+        $this->increment('reprint_count');
+
+        return $this->reprint_count;
     }
 }
