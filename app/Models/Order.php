@@ -36,6 +36,8 @@ class Order extends Model
         'cancellation_reason',
         'cancelled_at',
         'staff_id',
+        'cash_drawer_session_id',
+        'service_charge',
         'approved_by',
         'created_at',
         'updated_at',
@@ -47,6 +49,7 @@ class Order extends Model
             'subtotal' => 'integer',
             'discount_amount' => 'integer',
             'tax_amount' => 'integer',
+            'service_charge' => 'integer',
             'cogs_amount' => 'integer',
             'total_amount' => 'integer',
             'paid_amount' => 'integer',
@@ -77,6 +80,11 @@ class Order extends Model
     public function staff(): BelongsTo
     {
         return $this->belongsTo(User::class, 'staff_id');
+    }
+
+    public function cashDrawerSession(): BelongsTo
+    {
+        return $this->belongsTo(CashDrawerSession::class, 'cash_drawer_session_id');
     }
 
     public function approver(): BelongsTo

@@ -13,8 +13,11 @@ class Payment extends Model
     protected $fillable = [
         'restaurant_id',
         'order_id',
+        'cash_drawer_session_id',
         'payment_method',
         'amount',
+        'tendered_amount',
+        'change_amount',
         'status',
         'reference_no',
         'created_at',
@@ -25,6 +28,8 @@ class Payment extends Model
     {
         return [
             'amount' => 'integer',
+            'tendered_amount' => 'integer',
+            'change_amount' => 'integer',
         ];
     }
 
@@ -36,5 +41,10 @@ class Payment extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function cashDrawerSession(): BelongsTo
+    {
+        return $this->belongsTo(CashDrawerSession::class, 'cash_drawer_session_id');
     }
 }

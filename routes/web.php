@@ -3,6 +3,8 @@
 use App\Http\Controllers\Web\AdminAuthController;
 use App\Http\Controllers\Web\AdminDashboardController;
 use App\Http\Controllers\Web\AdminModuleController;
+use App\Http\Controllers\Web\CashDrawerController;
+use App\Http\Controllers\Web\CashierCheckoutController;
 use App\Http\Controllers\Web\CustomerOrderController;
 use App\Http\Controllers\Web\DiningTableController;
 use App\Http\Controllers\Web\EmployeeController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\Web\PromotionController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\RoleDashboardController;
 use App\Http\Controllers\Web\RolePermissionController;
+use App\Http\Controllers\Web\StaffFloorController;
 use Illuminate\Support\Facades\Route;
 
 // Root route redirects to role dashboard if authenticated, or login
@@ -141,7 +144,16 @@ Route::middleware(['auth', 'role:OWNER|MANAGER|CASHIER'])->prefix('cashier')->na
     Route::get('/', function () {
         return redirect()->route('cashier.dashboard');
     });
-    Route::get('/dashboard', [RoleDashboardController::class, 'cashierIndex'])->name('dashboard');
+    Route::get('/dashboard', [CashierCheckoutController::class, 'index'])->name('dashboard');
+    Route::get('/orders/{order}/details', [CashierCheckoutController::class, 'getOrderDetails'])->name('orders.details');
+    Route::post('/orders/{order}/settle', [CashierCheckoutController::class, 'settleOrder'])->name('orders.settle');
+    Route::get('/orders/{order}/receipt', [CashierCheckoutController::class, 'printReceipt'])->name('orders.receipt');
+
+    // Cash Drawer Shift Sessions
+    Route::post('/shift/open', [CashDrawerController::class, 'openShift'])->name('shift.open');
+    Route::post('/shift/cash-in-out', [CashDrawerController::class, 'cashInOut'])->name('shift.cashInOut');
+    Route::post('/shift/close', [CashDrawerController::class, 'closeShift'])->name('shift.close');
+    Route::get('/shift/{session}/z-report', [CashDrawerController::class, 'printZReport'])->name('shift.zReport');
 });
 
 // 4. STAFF / Waiter Floor Ordering Portal
@@ -149,5 +161,8 @@ Route::middleware(['auth', 'role:OWNER|MANAGER|STAFF'])->prefix('staff')->name('
     Route::get('/', function () {
         return redirect()->route('staff.dashboard');
     });
-    Route::get('/dashboard', [RoleDashboardController::class, 'staffIndex'])->name('dashboard');
+    Route::get('/dashboard', [StaffFloorController::class, 'index'])->name('dashboard');
+    Route::post('/orders', [StaffFloorController::class, 'storeOrder'])->name('orders.store');
+    Route::post('/orders/{order}/add-items', [StaffFloorController::class, 'addItems'])->name('orders.addItems');
+    Route::post('/tables/request-bill', [StaffFloorController::class, 'requestBill'])->name('tables.requestBill');
 });
