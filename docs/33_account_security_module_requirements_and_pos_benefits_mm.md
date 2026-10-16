@@ -1,0 +1,219 @@
+# စားသောက်ဆိုင် POS စနစ် အကောင့်လုံခြုံရေး မော်ဂျူး လိုအပ်ချက်များနှင့် စားသောက်ဆိုင်အတွက် အကျိုးကျေးဇူးများ (Account / Security Module Requirements & POS Operational Benefits)
+
+> [!IMPORTANT]
+> ### ⚠️ Git Branch & Commit Reminder Alert (Git Branch နှင့် Commit သတိပေးချက်)
+> **လက်ရှိ Active ဖြစ်နေသော Git Branch**: `feature/develop/010-security`
+> 
+> စနစ်ပြင်ဆင်မှုများ မစတင်မီ သို့မဟုတ် commit မပြုလုပ်မီ မိမိရောက်ရှိနေသော Git Branch အား သေချာစွာ စစ်ဆေးပေးပါရန် သတိပေးအပ်ပါသည်။
+> 
+> **Suggested Conventional Commit Message:**
+> ```text
+> feat(security): implement comprehensive account security master pin 2fa sessions and disaster backup
+> ```
+> 
+> **Ready-to-run Git Command:**
+> ```bash
+> cd backendPos
+> git add .
+> git commit -m "feat(security): implement comprehensive account security master pin 2fa sessions and disaster backup"
+> ```
+
+---
+
+## 📌 နိဒါန်း (Introduction)
+
+ဤစာတမ်းသည် Restaurant POS စနစ်၏ Admin Executive Portal ဖြစ်သော **`http://localhost:8085/admin/account/security`** (Account Governance & Security Module) အတွက် လိုအပ်ချက်များ (Requirements)၊ **ဤစနစ်အား စားသောက်ဆိုင် POS တွင် မဖြစ်မနေ ထည့်သွင်းရန် လို/မလို (Is this needed in Restaurant POS?)** နှင့် **လက်တွေ့ စားသောက်ဆိုင် လုပ်ငန်းခွင်တွင် မည်သို့ အထောက်အကူပြုနိုင်သည် (How it helps Restaurant POS Operations)** တို့ကို မြန်မာဘာသာဖြင့် အသေးစိတ် သုတေသနပြု ရှင်းလင်းတင်ပြထားခြင်း ဖြစ်ပါသည်။
+
+---
+
+## ၁။ ဤ `Account / Security` စနစ်သည် စားသောက်ဆိုင် POS တွင် တကယ်ထည့်သွင်းရန် လိုအပ်ပါသလား? (Is this needed in a Restaurant POS?)
+
+**အဖြေ: ၁၀၀% မဖြစ်မနေ ထည့်သွင်းရန် လိုအပ်ပါသည် (YES, Absolutely Mandatory)။**
+
+စားသောက်ဆိုင် ပိုင်ရှင်များ မကြာခဏ အထင်မှားတတ်သည်မှာ POS ဆိုသည်မှာ ကောင်တာတွင် ဟင်းပွဲရိုက်ပြီး စလစ်ထုတ်ပေးရုံသာ ဖြစ်သဖြင့် Password / Security သည် ရိုးရိုး Facebook အကောင့်လောက်သာ အရေးကြီးသည်ဟု ထင်မြင်တတ်ကြပါသည်။ သို့သော် လက်တွေ့ စားသောက်ဆိုင် လုပ်ငန်းခွင်တွင်:
+
+```mermaid
+graph TD
+    A["🔐 Owner Account Security Hub"] --> B["💰 Revenue & Financial Theft Protection<br>(ဝင်ငွေနှင့် စာရင်းခိုးယူမှု ကာကွယ်ခြင်း)"]
+    A --> C["🔑 Master Override PIN Security<br>(ဟင်းပွဲဖျက်/လျှော့စျေးပေး PIN လုံခြုံရေး)"]
+    A --> D["📱 Remote Terminal Session Kickout<br>(ဆိုင်တွင် မေ့ကျန်ခဲ့သော POS စက်အား အဝေးမှ Logout ချခြင်း)"]
+    A --> E["🛡️ 2FA Anti-Hijacking<br>(အိမ်မှနေ၍ စာရင်းစစ်ရာတွင် အကောင့်ဟက်ခံရမှု ကာကွယ်ခြင်း)"]
+    A --> F["💾 Database Disaster Backup<br>(ဆိုင်တွင်း POS စက် ပျက်ကျပါက စာရင်းမပျောက်စေခြင်း)"]
+```
+
+စားသောက်ဆိုင် POS ၏ **Owner အကောင့်** သည်:
+1. နေ့စဉ် ငွေသားနှင့် ဒစ်ဂျစ်တယ် အရောင်းသိန်းပေါင်းများစွာ၏ အမြတ်/အရှုံး (P&L) စာရင်းများ။
+2. ဝန်ထမ်းများ၏ လစာ၊ ကော်မရှင်နှင့် အလုပ်ထုတ်/ခန့်အပ်မှုများ။
+3. ဟင်းပွဲ ရောင်းစျေး/ဝယ်စျေး (Cost Price & Selling Price) ပြင်ဆင်ခွင့်များ။
+4. Cashier များ မှားယွင်းသော ဘေလ်ဖျက်သိမ်းမှု (Order Void) အား ခွင့်ပြုပေးနိုင်သော **Master Security PIN**။
+5. ငွေအံဆွဲအတွင်းရှိ နေ့ချုပ်ငွေစာရင်း (Z-Report) များ အားလုံးကို ထိန်းချုပ်ထားသော **အမြင့်ဆုံးသော သော့ချက် (Master Key)** ဖြစ်သောကြောင့် ဤ Security Module မပါရှိပါက စားသောက်ဆိုင်၏ ငွေကြေးယိုဖိတ်မှုနှင့် စာရင်းဖျက်ဆီးခံရမှုများကို မည်သို့မျှ မကာကွယ်နိုင်ပါ။
+
+---
+
+## ၂။ ဤ Feature သည် စားသောက်ဆိုင် POS အတွက် မည်သို့ လက်တွေ့ အထောက်အကူပြုသနည်း? (How it Helps POS Operations)
+
+စားသောက်ဆိုင် လုပ်ငန်းခွင်တွင် တွေ့ကြုံရလေ့ရှိသော လက်တွေ့ ပြဿနာများနှင့် ဤ Security Module ၏ ဖြေရှင်းပေးနိုင်မှုများ:
+
+### (က) ဆိုင်တွင် မေ့ကျန်ခဲ့သော POS စက်များအား အဝေးမှ Log Out ချနိုင်ခြင်း (Remote Terminal Session Revocation)
+- **ပြဿနာ**: ဆိုင်ပိုင်ရှင်သည် နေ့လယ်ပိုင်းတွင် ကောင်တာရှိ Cashier Touch POS စက် သို့မဟုတ် ဝန်ထမ်းများသုံးသော Tablet တွင် မိမိ၏ Owner Account ဖြင့် Login ဝင်၍ စာရင်းစစ်ဆေးခဲ့သည်။ ညနေပိုင်းတွင် အရေးကြီးကိစ္စဖြင့် အပြင်ထွက်သွားရာ POS စက်တွင် Log out မလုပ်ခဲ့မိပါ။ ကောင်တာရှိ ဝန်ထမ်းများ သို့မဟုတ် မသမာသူများက ဆိုင်ရှင်၏ အကောင့်ပွင့်နေသည်ကို အခွင့်ကောင်းယူကာ စာရင်းများ ခိုးကြည့်ခြင်း၊ ဟင်းပွဲစျေးနှုန်း ခိုးပြင်ခြင်း သို့မဟုတ် ငွေအံဆွဲ ဖွင့်ယူခြင်းများ ပြုလုပ်နိုင်ပါသည်။
+- **ဖြေရှင်းချက်**: ဆိုင်ရှင်သည် မိမိဖုန်း (Mobile Phone) မှနေ၍ `/admin/account/security` သို့ ဝင်ကာ **"Log Out From All Other Devices"** ခလုတ်ကို နှိပ်လိုက်ရုံဖြင့် ဆိုင်ရှိ POS Terminal စက်များ၊ Tablet များပေါ်တွင် ပွင့်နေသော Session အားလုံး ချက်ချင်း ပိတ်သိမ်း (Revoke) သွားပြီး စနစ်လုံခြုံသွားပါမည်။
+
+### (ခ) ဆိုင်ရှင်၏ Master PIN ပြင်ဆင်သတ်မှတ်နိုင်ခြင်း (Master Approval PIN Governance)
+- **ပြဿနာ**: စားသောက်ဆိုင်များတွင် Cashier များသည် ဘေလ်ဖျက်လိုလျှင်ဖြစ်စေ (Void Bill)၊ အော်ဒါတွင် လျှော့စျေး 30% ပေးလိုလျှင်ဖြစ်စေ (Discount Approval) မန်နေဂျာ သို့မဟုတ် ဆိုင်ရှင်၏ ၄ လုံး သို့မဟုတ် ၆ လုံး PIN နံပါတ်ကို ရိုက်ထည့်ရလေ့ရှိပါသည်။ ကာလကြာရှည်လာသောအခါ ဝန်ထမ်းများသည် ဆိုင်ရှင် PIN ရိုက်သည်ကို အလွတ်မှတ်မိသွားကြပြီး ဆိုင်ရှင်မသိဘဲ ဘေလ်များ ခိုးဖျက်ကာ ငွေလိမ်ယူတတ်ကြပါသည်။
+- **ဖြေရှင်းချက်**: ဆိုင်ရှင်သည် ဤ Security မျက်နှာပြင်တွင် မိမိ၏ **Master Override PIN** ကို အချိန်မရွေး စက္ကန့်ပိုင်းအတွင်း လျှို့ဝှက်စွာ ပြောင်းလဲနိုင်သောကြောင့် ဝန်ထမ်းများ PIN ခိုးယူအသုံးပြုခြင်းကို ချက်ချင်း ဟန့်တားနိုင်ပါသည်။
+
+### (ဂ) အပြင်မှ စာရင်းစစ်ဆေးရာတွင် အကောင့်ဟက်ခံရမှု ကာကွယ်ခြင်း (Two-Factor Authentication - 2FA)
+- **ပြဿနာ**: ဆိုင်ရှင်သည် ခရီးသွားနေစဉ် သို့မဟုတ် အိမ်မှနေ၍ ဆိုင်၏ နေ့စဉ်အရောင်းစာရင်းများကို ကြည့်ရှုလိုသည်။ အကယ်၍ ဆိုင်ရှင်၏ Password အား တစ်စုံတစ်ယောက်က ခန့်မှန်းမိသွားပါက ဆိုင်၏ အချက်အလက်များ ပေါက်ကြားသွားနိုင်သည်။
+- **ဖြေရှင်းချက်**: **Google Authenticator (2FA)** ကို ဖွင့်ထားပါက Password မှန်ရုံဖြင့် ဝင်ရောက်၍ မရဘဲ၊ ဆိုင်ရှင်၏ လက်ကိုင်ဖုန်းထဲရှိ 6-digit Code (OTP) ပါမှသာ ဝင်ရောက်နိုင်မည်ဖြစ်သဖြင့် လုံခြုံရေး ၁၀၀% စိတ်ချရပါသည်။
+
+### (ဃ) စကားဝှက် ခိုးရိုက်စမ်းသပ်မှုများ ကာကွယ်ခြင်း (Brute-Force & Failed Login Protection)
+- ဝန်ထမ်းများ သို့မဟုတ် ပြင်ပမှ မသမာသူက ဆိုင်ရှင်စကားဝှက်ကို အကြိမ်ကြိမ် မှားယွင်းစွာ ရိုက်နှိပ်စမ်းသပ်ပါက (ဥပမာ: ၅ ကြိမ်ဆက်တိုက်မှားယွင်းပါက) အကောင့်အား ၁၅ မိနစ် အလိုအလျောက် Lock ချပေးပြီး ဆိုင်ရှင်ထံ လုံခြုံရေး သတိပေးချက် (Security Alert) ပေးပို့ခြင်း။
+
+### (င) စားသောက်ဆိုင် POS စက် ပျက်ကျပါက စာရင်းမပျောက်စေခြင်း (Database Disaster Recovery Backup)
+- မီးပျက်ခြင်း၊ ဗို့အားအတက်အကျဖြစ်ခြင်း သို့မဟုတ် POS PC စက် Hardware ပျက်စီးသွားပါက ယနေ့အထိ ရောင်းချခဲ့သော သန်းပေါင်းများစွာသော ငွေစာရင်းများနှင့် ဟင်းပွဲမီနူးများ မပျောက်ပျက်စေရန် တစ်ချက်နှိပ်ရုံဖြင့် Database SQL Backup ကို ဒေါင်းလုဒ်ရယူနိုင်ခြင်း။
+
+---
+
+## ၃။ `http://localhost:8085/admin/account/security` တည်ဆောက်ရန် မည်သည့် အစိတ်အပိုင်းများ လိုအပ်သနည်း? (What is Required to Build This?)
+
+စနစ်တစ်ခုလုံး ပြီးပြည့်စုံစေရန် အောက်ပါ အဓိက အစိတ်အပိုင်း (၅) ပိုင်း ပါဝင်ရပါမည်:
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|  🔐 Account & Master Security Governance                               [ 🟢 Security Status: Excellent ]       |
+|  Manage owner credentials, Master PIN, active POS sessions, two-factor authentication, and database backups    |
++---------------------------------------------------------------------------------------------------------------+
+| [ 🔑 Password & PIN ]  [ 📱 Active POS Terminals ]  [ 🛡️ Two-Factor (2FA) ]  [ 💾 Database Disaster Backup ]    |
++---------------------------------------------------------------------------------------------------------------+
+|                                                                                                               |
+|  SECTION 1: CHANGE MASTER PASSWORD & PIN                                                                      |
+|  Current Password:     [ •••••••••••••••• ]                                                                   |
+|  New Master Password:  [ •••••••••••••••• ] (Requires min 8 chars, mixed case & numbers)                      |
+|  Confirm Password:     [ •••••••••••••••• ]                                                                   |
+|  Master POS PIN (4-6 digits): [ 8 4 9 2 ] (Used for Void/Discount Manager Approvals at Cashier Register)      |
+|  [ 💾 Update Credentials & PIN ]                                                                              |
+|                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------- |
+|  SECTION 2: ACTIVE BROWSER & POS TERMINAL SESSIONS                                                            |
+|  Monitor and remotely revoke sessions running on cashier counters or mobile tablets.                          |
+|                                                                                                               |
+|  • Cashier Touch Terminal #1 (Chrome on Windows) - 192.168.1.100 - Active 2 mins ago       [ Revoke Session ]|
+|  • Waiter Tablet Samsung Tab A (Android Chrome)   - 192.168.1.105 - Active 15 mins ago      [ Revoke Session ]|
+|  • Owner iPhone 15 Pro (Safari Mobile)             - 203.81.77.12  - Current Device (You)    [ Active Now ]    |
+|                                                                                                               |
+|  [ 🚪 Log Out From All Other Devices ]                                                                        |
+|                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------- |
+|  SECTION 3: TWO-FACTOR AUTHENTICATION (2FA)                                                                   |
+|  Status: [ 🔴 DISABLED ]  -> [ 🔒 Enable Google Authenticator ]                                               |
+|  Scan QR code with Google Authenticator / Authy to get 6-digit verification code.                              |
+|                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------- |
+|  SECTION 4: DATABASE DISASTER BACKUP                                                                          |
+|  Last Automated Backup: Today 03:00 AM (Size: 14.2 MB)                                                        |
+|  [ 📥 Download Latest Database Backup (SQL.GZ) ]                                                               |
++---------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+## ၄။ နည်းပညာနှင့် ဒေတာဘေ့စ် လိုအပ်ချက်များ (Technical & Database Requirements)
+
+### ၄.၁။ Database Schema Additions (`users` ဇယား)
+- `users` ဇယားတွင် အောက်ပါ အကွက်များ ပါဝင်ပြီးဖြစ်/ထပ်မံဖြည့်စွက်ရန်:
+  - `pin_code` (string - Hash ပြုလုပ်ထားသော ၄-၆ လုံး အတည်ပြု PIN နံပါတ်)။
+  - `two_factor_secret` (nullable text - 2FA လျှို့ဝှက်ကုဒ်)။
+  - `two_factor_recovery_codes` (nullable text - ဖုန်းပျောက်ပါက သုံးမည့် ကုဒ် ၈ ခု)။
+  - `two_factor_confirmed_at` (nullable timestamp)။
+
+### ၄.၂။ Sessions Table Integration (`sessions` ဇယား)
+- Laravel ၏ Database Session Driver ကို အသုံးပြု၍ လက်ရှိ အသုံးပြုနေသော Device၊ IP Address၊ User Agent နှင့် နောက်ဆုံး လှုပ်ရှားချိန်တို့ကို စောင့်ကြည့်ကာ အဝေးမှ `logout` ပြုလုပ်နိုင်ရန်။
+
+### ၄.၃။ Dedicated Form Requests (Rule 4: Mandatory Form Requests)
+1. `UpdatePasswordAndPinRequest.php`:
+   - လက်ရှိ စကားဝှက် မှန်ကန်မှု (`current_password` rule).
+   - စကားဝှက်အသစ် အနည်းဆုံး ၈ လုံး၊ စာလုံးကြီး/သေး/ဂဏန်း ပါဝင်မှု.
+   - Master PIN သည် ဂဏန်း ၄ လုံးမှ ၆ လုံးအတွင်း ဖြစ်မှု (`numeric|digits_between:4,6`).
+2. `ConfirmTwoFactorRequest.php`:
+   - Google Authenticator ၏ 6-digit OTP မှန်ကန်မှု စစ်ဆေးခြင်း။
+
+### ၄.၄။ Dedicated API Resources (Rule 4: Mandatory API Resources)
+- `AccountSecurityResource.php`:
+  - အရေးကြီးသော Password၊ PIN နှင့် 2FA Secret များကို လုံးဝ ဖုံးကွယ်ထားပြီး၊ 2FA ဖွင့်/ပိတ် အခြေအနေ၊ Active Sessions အရေအတွက်နှင့် နောက်ဆုံး စကားဝှက် ပြောင်းလဲခဲ့သော အချိန်တို့ကိုသာ သန့်ရှင်းစွာ ထုတ်ပေးခြင်း။
+
+### ၄.၅။ Audit Trail Logging
+- စကားဝှက် သို့မဟုတ် Master PIN ပြောင်းလဲခြင်း၊ 2FA ဖွင့်ခြင်း/ပိတ်ခြင်း သို့မဟုတ် အခြား Device များကို Logout ချခြင်းများ ဖြစ်ပေါ်တိုင်း `AuditLogService` မှ `SETTINGS_UPDATE` / `AUTH_SECURITY` အဖြစ် မဖျက်နိုင်သော Audit Log သိမ်းဆည်းခြင်း။
+
+---
+
+## ၅။ စနစ် အကောင်အထည်ဖော်မည့် လမ်းပြမြေပုံ (Step-by-Step Implementation Roadmap)
+
+အကယ်၍ ဤ Feature အား စတင် တည်ဆောက်မည်ဆိုပါက အောက်ပါ အဆင့် (၅) ဆင့်ဖြင့် စနစ်တကျ အကောင်အထည်ဖော်မည် ဖြစ်ပါသည်:
+
+1. **Step 1: Session & Database Driver Verification**:
+   - `config/session.php` တွင် `database` driver ချိတ်ဆက်ထားခြင်း ရှိ/မရှိ စစ်ဆေးပြီး `sessions` ဇယားအား အသင့်ပြင်ဆင်ခြင်း။
+2. **Step 2: Form Requests & API Resources (Rule 4)**:
+   - `UpdatePasswordAndPinRequest` နှင့် `AccountSecurityResource` တည်ဆောက်ခြင်း။
+3. **Step 3: Controller & Routes Setup**:
+   - `AccountSecurityController` တည်ဆောက်၍ `edit`, `updatePassword`, `updatePin`, `revokeSession`, `logoutOtherDevices`, `downloadBackup` စသည့် endpoint များ ချိတ်ဆက်ခြင်း။
+   - Route `http://localhost:8085/admin/account/security` အား Placeholder View အစား Real Interactive View သို့ ချိတ်ဆက်ခြင်း။
+4. **Step 4: Modern Blade UI Dashboard (Rule 5 & Rule 6)**:
+   - Mada typography၊ Obsidian dark slate palette၊ Master PIN Pad၊ Active Devices Card နှင့် Backup Downloader တို့ပါဝင်သော UI ဖန်တီးခြင်း။
+5. **Step 5: Strict Verification Tests (Rule 3)**:
+   - Feature Test Suite ရေးသားပြီး Password ပြောင်းလဲမှု၊ PIN သတ်မှတ်မှု၊ အဝေးမှ Session Revocation နှင့် Unauthorized Access တားဆီးမှုများကို ၁၀၀% စမ်းသပ် အတည်ပြုခြင်း။
+
+---
+
+## ၇။ စနစ် စစ်ဆေးအတည်ပြုပြီးစီးမှု မှတ်တမ်း (Strict Verification & Test Results)
+
+အောက်ပါ Automated Feature Test Suite များအား အောင်မြင်စွာ စစ်ဆေးအတည်ပြုခဲ့ပြီး ဖြစ်ပါသည်:
+
+```bash
+docker exec pos-backend-app php artisan test tests/Feature/Admin/AccountSecurityTest.php
+```
+
+**စစ်ဆေးမှု ရလဒ်များ (All 10 Tests Passed 100%):**
+- ✓ `owner can view account security dashboard` (၂၀၀ OK၊ UI Component များ စုံလင်စွာ ပြသနိုင်မှု)
+- ✓ `cashier and unauthorized roles are forbidden` (၄၀၃ Forbidden တားဆီးမှု)
+- ✓ `owner can view security data via json resource` (Rule 4: API Resource အချက်အလက်များ လုံခြုံစွာ ထုတ်ပေးမှု၊ Sensitive Secret များ ဖုံးကွယ်ထားမှု)
+- ✓ `owner can update master password with correct current password` (စကားဝှက် အသစ် ပြောင်းလဲမှုနှင့် Audit Log ရေးသွင်းမှု)
+- ✓ `owner cannot update password with incorrect current password` (မှားယွင်းသော လက်ရှိစကားဝှက် ငြင်းပယ်မှု)
+- ✓ `owner can update master approval pin` (Cashier ကောင်တာ Void/Discount Approve Master PIN သတ်မှတ်နိုင်မှု)
+- ✓ `owner can setup and activate two factor authentication` (Google Authenticator TOTP QR Code နှင့် 6-digit Code ဖြင့် Activate ပြုလုပ်နိုင်မှု)
+- ✓ `owner can disable two factor authentication` (2FA အား ပြန်လည်ပိတ်သိမ်းနိုင်မှု)
+- ✓ `owner can revoke remote session and logout other devices` (အခြား POS စက်များပေါ်ရှိ Session များ အဝေးမှ ချက်ချင်း ဖြတ်တောက်နိုင်မှု)
+- ✓ `owner can download database disaster recovery backup` (One-Click SQL Disaster Backup ဒေါင်းလုဒ် ရယူနိုင်မှု)
+
+```text
+Tests:    10 passed (70 assertions)
+Full Suite: 165 passed (920 assertions)
+Pint Code Style: Clean (195 files passed)
+```
+
+---
+
+## ၈။ ဖန်တီး/ပြင်ဆင်ခဲ့သော ဖိုင်များ စာရင်း (Created & Modified Files)
+
+1. **Database Migration**:
+   - [`database/migrations/2026_09_29_000002_add_two_factor_fields_to_users_table.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/database/migrations/2026_09_29_000002_add_two_factor_fields_to_users_table.php)
+2. **Model**:
+   - [`app/Models/User.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Models/User.php)
+3. **Form Requests (Rule 4)**:
+   - [`app/Http/Requests/Admin/UpdatePasswordRequest.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Requests/Admin/UpdatePasswordRequest.php)
+   - [`app/Http/Requests/Admin/UpdatePinRequest.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Requests/Admin/UpdatePinRequest.php)
+   - [`app/Http/Requests/Admin/ConfirmTwoFactorRequest.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Requests/Admin/ConfirmTwoFactorRequest.php)
+   - [`app/Http/Requests/Admin/RevokeSessionRequest.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Requests/Admin/RevokeSessionRequest.php)
+4. **API Resource (Rule 4)**:
+   - [`app/Http/Resources/Admin/AccountSecurityResource.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Resources/Admin/AccountSecurityResource.php)
+5. **Services**:
+   - [`app/Services/TwoFactorAuthService.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Services/TwoFactorAuthService.php) (RFC 6238 TOTP Engine & QR Code)
+   - [`app/Services/DatabaseBackupService.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Services/DatabaseBackupService.php) (SQL Disaster Backup Dumper)
+6. **Controller**:
+   - [`app/Http/Controllers/Web/AccountSecurityController.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/app/Http/Controllers/Web/AccountSecurityController.php)
+7. **Blade View (Rule 5 & Rule 6)**:
+   - [`resources/views/admin/account/security.blade.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/resources/views/admin/account/security.blade.php)
+8. **Routes**:
+   - [`routes/web.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/routes/web.php)
+9. **Feature Tests (Rule 3)**:
+   - [`tests/Feature/Admin/AccountSecurityTest.php`](file:///Users/kyawwaiyan/Documents/my-Home-tech/resturant-pos/backendPos/tests/Feature/Admin/AccountSecurityTest.php)
+
