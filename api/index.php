@@ -26,7 +26,7 @@ foreach ($serverlessDirs as $dir) {
 $tmpDb = '/tmp/database.sqlite';
 $bundledDb = __DIR__.'/../database/database.sqlite';
 
-if (! file_exists($tmpDb) && file_exists($bundledDb)) {
+if (file_exists($bundledDb) && (! file_exists($tmpDb) || filemtime($bundledDb) > filemtime($tmpDb))) {
     @copy($bundledDb, $tmpDb);
 }
 
