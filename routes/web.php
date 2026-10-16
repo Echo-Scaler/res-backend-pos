@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\MenuController;
 use App\Http\Controllers\Web\OrderVerificationController;
 use App\Http\Controllers\Web\PromotionController;
 use App\Http\Controllers\Web\ReportController;
+use App\Http\Controllers\Web\RestaurantSettingsController;
 use App\Http\Controllers\Web\RoleDashboardController;
 use App\Http\Controllers\Web\RolePermissionController;
 use App\Http\Controllers\Web\StaffFloorController;
@@ -36,7 +37,9 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // 14 Owner Modules
-    Route::get('/settings/restaurant', [AdminModuleController::class, 'show'])->defaults('module', 'restaurant-settings')->name('settings.restaurant');
+    Route::get('/settings/restaurant', [RestaurantSettingsController::class, 'edit'])->name('settings.restaurant');
+    Route::post('/settings/restaurant', [RestaurantSettingsController::class, 'update'])->name('settings.restaurant.update');
+    Route::get('/settings/restaurant/data', [RestaurantSettingsController::class, 'apiShow'])->name('settings.restaurant.data');
     Route::get('/roles-permissions', [RolePermissionController::class, 'index'])->name('roles.permissions');
     Route::post('/roles-permissions/update-role', [RolePermissionController::class, 'updateRole'])->name('roles.permissions.updateRole');
     Route::post('/roles-permissions/toggle-permission', [RolePermissionController::class, 'togglePermission'])->name('roles.permissions.togglePermission');

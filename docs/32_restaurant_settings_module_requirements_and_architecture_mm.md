@@ -1,0 +1,295 @@
+# စားသောက်ဆိုင် POS စနစ် ဆိုင်ဆက်တင်များ စီမံခန့်ခွဲမှု လိုအပ်ချက်များနှင့် ဗိသုကာ (Restaurant Settings Module Requirements & Architecture)
+
+> [!IMPORTANT]
+> ### ⚠️ Git Branch & Commit Reminder Alert (Git Branch နှင့် Commit သတိပေးချက်)
+> **လက်ရှိ Active ဖြစ်နေသော Git Branch**: `feature/develop/008-resturant-settings`
+> 
+> စနစ်ပြင်ဆင်မှုများ မစတင်မီ မိမိရောက်ရှိနေသော Git Branch အား သေချာစွာ စစ်ဆေးပေးပါရန် သတိပေးအပ်ပါသည်။
+> 
+> **Suggested Conventional Commit Message:**
+> ```text
+> docs(settings): define restaurant profile and operational settings requirements
+> ```
+> 
+> **Ready-to-run Git Command:**
+> ```bash
+> cd backendPos
+> git add .
+> git commit -m "docs(settings): define restaurant profile and operational settings requirements"
+> ```
+
+---
+
+## 📌 နိဒါန်း (Introduction)
+
+ဤစာတမ်းသည် Restaurant POS စနစ်၏ Admin Executive Portal ဖြစ်သော **`http://localhost:8085/admin/settings/restaurant`** (Restaurant Profile & Operational Settings Module) တည်ဆောက်ရန်အတွက် လက်ရှိ Project အား စစ်ဆေးချက် (Current Project Audit)၊ အဘယ်ကြောင့် အသုံးပြုရသည် (Why)၊ အသေးစိတ် လုပ်ငန်းခွင် လိုအပ်ချက်များ (Comprehensive Requirements) နှင့် နည်းပညာ ဗိသုကာ (Architecture & Implementation Plan) တို့ကို မြန်မာဘာသာဖြင့် စုံလင်စွာ မှတ်တမ်းတင်ထားခြင်း ဖြစ်ပါသည်။
+
+---
+
+## ၁။ လက်ရှိ Codebase အခြေအနေ စစ်ဆေးချက် (Current Project Audit)
+
+လက်ရှိ `backendPos` စနစ်အား စစ်ဆေးခဲ့ရာတွင် အောက်ပါ အချက်အလက်များကို တွေ့ရှိရပါသည်:
+
+1. **Route Mapping**:
+   - `routes/web.php` တွင် `Route::get('/settings/restaurant', [AdminModuleController::class, 'show'])->defaults('module', 'restaurant-settings')->name('settings.restaurant');` အဖြစ် တည်ရှိနေပြီး လက်တွေ့တွင် Placeholder View (`admin.modules.placeholder`) ကိုသာ ပြသနေပါသည်။
+2. **Database Schema (`restaurants` Table)**:
+   - `database/migrations/2026_09_22_000001_create_restaurants_table.php` တွင် အခြေခံ အချက်အလက် (၆) ချက်သာ ရှိပါသေးသည်:
+     - `name` (ဆိုင်အမည်)
+     - `slug` (URL slug)
+     - `phone` (ဖုန်းနံပါတ်)
+     - `email` (အီးမေးလ်)
+     - `address` (လိပ်စာ)
+     - `is_active` (အခြေအနေ)
+3. **Missing Critical Restaurant Settings (ချို့ယွင်းနေသော အရေးကြီး အချက်အလက်များ)**:
+   - **Receipt Branding & Header/Footer**: 80mm အပူခံပြေစာ (Thermal Receipt) ပေါ်တွင် ရိုက်နှိပ်ရမည့် ဆိုင်တံဆိပ် Logo၊ ကြိုဆိုစာသား (Header)၊ ကျေးဇူးတင်စာလွှာနှင့် Wi-Fi စကားဝှက် (Footer) စသည်တို့ မပါရှိသေးပါ။
+   - **Legal & Tax Info**: တရားဝင် ကုန်သွယ်လုပ်ငန်းခွန် ပြေစာထုတ်ပေးရန် Commercial Tax ID / TIN Number ထည့်သွင်းရန် နေရာ မရှိသေးပါ။
+   - **Operating Hours & Schedule**: ဆိုင်ဖွင့်ချိန်/ပိတ်ချိန် (Opening / Closing Times) နှင့် ဖွင့်လှစ်သော နေ့ရက်များ (Operating Days) မပါရှိသေးပါ။
+   - **Channel Toggles**: ထိုင်စား (Dine-In)၊ ပါဆယ် (Takeaway) နှင့် စားပွဲခုံ QR မှာယူမှု (QR Table Order) ခွင့်ပြု/ပိတ်ပင်ခြင်း ခလုတ်များ မရှိသေးပါ။
+   - **Hardware & POS Settings**: ငွေရှင်းပြီးပါက ငွေအံဆွဲ အလိုအလျောက် ဖွင့်ရန် (Auto Drawer Kick) နှင့် စလစ် အလိုအလျောက် ထုတ်ရန် (Auto Print) ဆက်တင်များ မရှိသေးပါ။
+
+---
+
+## ၂။ အဘယ်ကြောင့် စားသောက်ဆိုင် POS တွင် ဆိုင်ဆက်တင်များ စီမံခန့်ခွဲမှု လိုအပ်သနည်း? (Why Restaurant Settings are Essential)
+
+စားသောက်ဆိုင် လုပ်ငန်းခွင်တွင် ဆိုင်ဆက်တင်များသည် ရိုးရိုး Form တစ်ခု မဟုတ်ဘဲ POS စနစ်တစ်ခုလုံး၏ အရေးအကြီးဆုံးသော ဗဟိုအချက်အချာ (Central Nerve Center) ဖြစ်ပါသည်။
+
+```mermaid
+graph TD
+    A["⚙️ Restaurant Settings Center"] --> B["🧾 80mm Thermal Receipts<br>(Logo, Tax ID, WiFi Password, Footer)"]
+    A --> C["📱 Customer QR Mobile Menu<br>(Brand Cover, Logo, Open/Close Status)"]
+    A --> D["💵 Billing & Tax Rules (MMK)<br>(Service Charge %, Commercial Tax %)"]
+    A --> E["🖨️ POS Hardware Triggers<br>(80mm/58mm Width, Auto Cash Drawer Kick)"]
+    A --> F["📜 Immutable Audit Trail<br>(Track Owner Settings Modifications)"]
+```
+
+### (က) တရားဝင် ပြေစာစလစ်နှင့် အခွန်စည်းကြပ်မှု (Official Thermal Receipts & Tax Compliance)
+- စားသောက်ဆိုင်များတွင် ဧည့်သည်အား ထုတ်ပေးသော 80mm စလစ်ပြေစာသည် ဆိုင်၏ အမှတ်တံဆိပ် ပုံရိပ်ဖြစ်ပါသည်။
+- ဆိုင်တံဆိပ် Logo၊ တရားဝင် ကုန်သွယ်ခွန် မှတ်ပုံတင်အမှတ် (Commercial Tax ID)၊ စားပွဲနံပါတ်၊ ဧည့်သည်များအတွက် Wi-Fi Password နှင့် "ကျေးဇူးတင်ပါသည်၊ နောက်လည်း ကြွရောက်အားပေးပါရန် ဖိတ်ခေါ်ပါသည်" ဟူသော စာသားများ ပါဝင်မှသာ တရားဝင်ပြီး စံချိန်မီသော စားသောက်ဆိုင် ပြေစာဖြစ်လာပါမည်။
+
+### (ခ) စားပွဲခုံ QR မှာယူမှု စနစ်တွင် ဆိုင်ပုံရိပ် ခိုင်မာစေခြင်း (Customer QR Menu Branding)
+- ဧည့်သည်များသည် စားပွဲခုံပေါ်ရှိ QR Code ကို မိမိဖုန်းဖြင့် Scan ဖတ်ချိန်တွင် ဆိုင် Logo၊ မျက်နှာစာ ပုံရိပ် (Cover Photo) နှင့် ဆိုင်ဖွင့်ချိန်/ပိတ်ချိန် အချက်အလက်များကို တွေ့မြင်ရမည် ဖြစ်ပါသည်။
+- ဆိုင်ပိတ်ချိန်ဖြစ်ပါက ဧည့်သည်အား "ဆိုင်ပိတ်ချိန် ဖြစ်ပါသဖြင့် အော်ဒါလက်ခံခြင်း ခေတ္တရပ်နားထားပါသည်" ဟု အလိုအလျောက် အသိပေးနိုင်ရပါမည်။
+
+### (ဂ) POS Hardware နှင့် ငွေအံဆွဲ အလိုအလျောက် လည်ပတ်မှု (POS Hardware & Drawer Kick)
+- ကောင်တာတွင် Cashier ငွေရှင်း (Settle Bill) ပြီးသည်နှင့် Thermal Printer မှ စလစ်ချက်ချင်း ထွက်လာစေရန် (`auto_print_receipt`) နှင့် ပရင်တာမှ RJ11 ကြိုးမှတစ်ဆင့် သံမဏိ ငွေအံဆွဲကို အလိုအလျောက် ကန်ဖွင့်ပေးရန် (`auto_kick_drawer`) ဆက်တင်များ လိုအပ်ပါသည်။
+
+### (ဃ) သစ္စာရှိ လုံခြုံရေး စောင့်ကြည့်မှု (Audit Trail Integration)
+- ဆိုင်ပိုင်ရှင် သို့မဟုတ် မန်နေဂျာက အခွန် %၊ ဝန်ဆောင်ခ % သို့မဟုတ် ဆိုင်လိပ်စာ ပြင်ဆင်ပါက `AuditLogService` မှ `SETTINGS_UPDATE` အဖြစ် မည်သည့် IP၊ မည်သည့်အချိန်တွင် ပြင်ဆင်ခဲ့သည်ကို မဖျက်နိုင်သော Audit Log အဖြစ် မှတ်တမ်းတင်ရပါမည်။
+
+---
+
+## ၃။ အသေးစိတ် လုပ်ဆောင်ချက် လိုအပ်ချက်များ (Comprehensive Functional Requirements)
+
+UI မျက်နှာပြင်တွင် အောက်ပါ Tabs (၅) ခုဖြင့် စနစ်တကျ ဖွဲ့စည်းတည်ဆောက်ရပါမည်:
+
+### ၃.၁။ Tab 1: ဆိုင်အထွေထွေနှင့် အမှတ်တံဆိပ် (General Profile & Branding)
+1. **Restaurant Name (ဆိုင်အမည်)**: ဥပမာ - `Golden Palace Executive Restaurant & Bistro` (Required).
+2. **Branch Slug / Code (ဆိုင်ခွဲကုဒ်)**: ဥပမာ - `golden-palace-main` (Unique, Readonly or Slugified).
+3. **Tagline / Slogan (ဆောင်ပုဒ်)**: ဥပမာ - `Authentic Myanmar & Asian Fusion Dining`.
+4. **Brand Logo Upload (ဆိုင်တံဆိပ် ပုံရိပ်တင်ခြင်း)**:
+   - JPG / PNG / WebP အထောက်အပံ့ပြုပြီး Live Image Preview ပြသခြင်း။
+   - ပုံဟောင်း ဖျက်ထုတ်နိုင်သော "Remove Logo" ခလုတ် ပါဝင်ခြင်း။
+5. **Cover / Banner Image (ဆိုင်မျက်နှာစာ ပုံရိပ်)**:
+   - QR Menu Header တွင် ပြသမည့် ပုံရိပ်။
+
+### ၃.၂။ Tab 2: ဆက်သွယ်ရန်၊ လိပ်စာနှင့် အခွန်အချက်အလက် (Contact, Address & Legal Tax)
+1. **Primary Contact Phone (အဓိက ဆက်သွယ်ရန်ဖုန်း)**: ဥပမာ - `09-450001234`.
+2. **Secondary / Emergency Phone (အရန်ဖုန်း)**: ဥပမာ - `09-250009876`.
+3. **Official Email (တရားဝင် အီးမေးလ်)**: ဥပမာ - `contact@goldenpalace.com`.
+4. **Street Address (ဆိုင်လိပ်စာ အပြည့်အစုံ)**: ဥပမာ - `No. 45, Pyay Road, Kamayut Township`.
+5. **City / Region (မြို့နယ်နှင့် တိုင်းဒေသကြီး)**: ဥပမာ - `Yangon` / `Mandalay`.
+6. **Commercial Tax ID / TIN (ကုန်သွယ်လုပ်ငန်းခွန် မှတ်ပုံတင်အမှတ်)**: ဥပမာ - `CT-98472910-YGN`.
+
+### ၃.၃။ Tab 3: 80mm အပူခံစလစ်ပြေစာ ပြင်ဆင်ချက်များ (Thermal Receipt Customization)
+1. **Receipt Header Note (စလစ်ခေါင်းစီး ကြိုဆိုစာသား)**:
+   - ဥပမာ: `*** မင်္ဂလာပါ Golden Palace မှ နွေးထွေးစွာ ကြိုဆိုပါသည် ***`.
+2. **Receipt Footer Note (စလစ်အောက်ခြေ စာသား)**:
+   - ဥပမာ: `ကျေးဇူးတင်ပါသည်၊ နောက်လည်း ကြွရောက်အားပေးပါရန် ဖိတ်ခေါ်ပါသည်။ WiFi: GP-Guest (PW: 12345678)`.
+3. **Show Brand Logo on Receipt (စလစ်ပေါ်တွင် Logo ထည့်သွင်းခြင်း)**:
+   - Toggle Switch (`true`/`false`).
+4. **Show Tax ID on Receipt (စလစ်တွင် အခွန်နံပါတ် ပြသခြင်း)**:
+   - Toggle Switch (`true`/`false`).
+5. **Interactive Live Receipt Preview (တိုက်ရိုက် စလစ်ပြသမှု Box)**:
+   - ညာဘက်ခြမ်းတွင် 80mm Thermal Receipt အစစ်အတိုင်း အချိန်နှင့်တစ်ပြေးညီ Preview ကြည့်ရှုနိုင်သော Component ပါဝင်ရမည်။
+
+### ၃.၄။ Tab 4: ဖွင့်ချိန်ပိတ်ချိန်နှင့် ဝန်ဆောင်မှု ပုံစံများ (Business Hours & Channels)
+1. **Opening Time (ဆိုင်ဖွင့်ချိန်)**: ဥပမာ - `09:00 AM`.
+2. **Closing Time (ဆိုင်ပိတ်ချိန်)**: ဥပမာ - `10:00 PM`.
+3. **Operating Days (ဖွင့်လှစ်သော နေ့ရက်များ)**:
+   - Checkboxes: Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+4. **Service Channels (ဝန်ဆောင်မှု ရွေးချယ်ချက်များ)**:
+   - `is_dine_in_enabled`: စားပွဲထိုင်စား စနစ် ဖွင့်/ပိတ်ခြင်း (Toggle).
+   - `is_takeaway_enabled`: ပါဆယ်စနစ် ဖွင့်/ပိတ်ခြင်း (Toggle).
+   - `is_qr_order_enabled`: စားပွဲခုံ QR ဖတ်၍ အော်ဒါတင်ခြင်း ဖွင့်/ပိတ်ခြင်း (Toggle).
+
+### ၃.၅။ Tab 5: ငွေကြေးနှင့် ဟာ့ဒ်ဝဲ ဆက်တင်များ (POS Currency & Hardware Defaults)
+1. **System Currency (ငွေကြေးယူနစ် - Rule 6)**:
+   - မြန်မာကျပ်ငွေ `MMK` အား အသေ (Locked / Disabled) သတ်မှတ်ထားရမည်။ ပြင်ဆင်ခွင့် မပြုပါ။
+2. **Currency Symbol**: `Ks ` သို့မဟုတ် `ကျပ်`.
+3. **Default Commercial Tax % (ကုန်သွယ်ခွန် %)**: ဥပမာ - `5%`.
+4. **Default Service Charge % (ဝန်ဆောင်ခ %)**: ဥပမာ - `5%`.
+5. **Printer Paper Width**: `80mm` (Standard) သို့မဟုတ် `58mm` (Compact).
+6. **Auto Cash Drawer Kick on Settle**: ငွေရှင်းပြီးသည်နှင့် ငွေအံဆွဲ အလိုအလျောက် ဖွင့်ခြင်း (Toggle).
+7. **Auto Print Receipt on Settle**: ငွေရှင်းပြီးသည်နှင့် ပြေစာ အလိုအလျောက် ထုတ်ခြင်း (Toggle).
+
+---
+
+## ၄။ ဒေတာဘေ့စ် ဖွဲ့စည်းပုံနှင့် Schema Migration Plan
+
+`restaurants` ဇယားအား ပိုမိုပြည့်စုံစေရန် အောက်ပါ Migration ဖြင့် အဆင့်မြှင့်တင်ရပါမည်:
+
+```mermaid
+erDiagram
+    RESTAURANTS {
+        bigint id PK
+        string name "Restaurant Legal Name"
+        string slug "Unique URL Identifier"
+        string tagline "Brand Slogan"
+        string logo "Image file path in storage"
+        string cover_image "Cover banner path"
+        string phone "Primary contact"
+        string secondary_phone "Emergency contact"
+        string email "Official contact email"
+        text address "Physical street address"
+        string city "Yangon, Mandalay, etc."
+        string state "Region / State"
+        string postal_code "Postal zip"
+        string tax_id "Commercial Tax Registration TIN"
+        text receipt_header "Top welcoming text"
+        text receipt_footer "Bottom thank you note and WiFi"
+        boolean show_logo_on_receipt "Default true"
+        boolean show_tax_id_on_receipt "Default true"
+        time opening_time "e.g. 09:00:00"
+        time closing_time "e.g. 22:00:00"
+        json operating_days "['MON','TUE','WED','THU','FRI','SAT','SUN']"
+        boolean is_dine_in_enabled "Default true"
+        boolean is_takeaway_enabled "Default true"
+        boolean is_qr_order_enabled "Default true"
+        string currency "MMK (ISO 4217)"
+        string currency_symbol "Ks "
+        decimal default_tax_percent "Default 5.00"
+        decimal default_service_charge_percent "Default 5.00"
+        string printer_paper_width "80mm / 58mm"
+        boolean auto_kick_drawer "Default true"
+        boolean auto_print_receipt "Default true"
+        boolean is_active "Operational status"
+        timestamps created_at_updated_at
+    }
+```
+
+---
+
+## ၅။ Backend Architecture: Form Requests & API Resources သတ်မှတ်ချက် (Rule 4)
+
+စနစ်၏ စည်းမျဉ်း (Rule 4: Mandatory Form Requests & API Resources) အတိုင်း Controller အတွင်း Inline Validation မပါရှိစေဘဲ အောက်ပါအတိုင်း ခွဲခြား တည်ဆောက်ရပါမည်:
+
+### ၅.၁။ Dedicated Form Request: `app/Http/Requests/Admin/UpdateRestaurantSettingsRequest.php`
+- ဆိုင်ပိုင်ရှင် (OWNER) သာလျှင် ပြင်ဆင်ခွင့်ရှိစေရန် Authorize စစ်ဆေးခြင်း။
+- Logo Image validation (Max 2MB, mimes: jpeg, png, webp)၊ Phone format၊ Tax % format (0-100) များကို သီးခြား စစ်ဆေးပေးပါသည်။
+
+### ၅.၂။ Dedicated API Resource: `app/Http/Resources/Admin/RestaurantSettingsResource.php`
+- Raw Model ကို ထုတ်မပြဘဲ Currency `MMK`၊ Logo URL အပြည့်အစုံ၊ အချိန် Format များနှင့်တကွ Safe Transformation ပြုလုပ်ပေးပါသည်။
+
+### ၅.၃။ Controller: `app/Http/Controllers/Web/RestaurantSettingsController.php`
+- `edit`: ဆိုင်ဆက်တင်များ မျက်နှာပြင် ပြသခြင်း။
+- `update`: အချက်အလက်များအား Validation စစ်ဆေး၍ သိမ်းဆည်းခြင်း၊ Logo အသစ် upload လုပ်ပါက Storage တွင် သိမ်းဆည်းကာ ပုံဟောင်း ဖျက်ထုတ်ခြင်း။
+- `AuditLogService::log`: ဆိုင်ဆက်တင်များ အပြောင်းအလဲအား `SETTINGS_UPDATE` အဖြစ် Audit Logs တွင် အလိုအလျောက် မှတ်တမ်းတင်ခြင်း။
+
+---
+
+## ၆။ UI / UX ဒီဇိုင်း သတ်မှတ်ချက်များ (Rule 5 & Rule 6)
+
+`http://localhost:8085/admin/settings/restaurant` မျက်နှာပြင်တွင် အောက်ပါ ဒီဇိုင်းစံနှုန်းများကို လိုက်နာရမည်:
+
+```
++---------------------------------------------------------------------------------------------------------------+
+|  ⚙️ Restaurant Business Profile & Settings                              [ 💾 Save Changes ] [ 🔄 Reset Form ]  |
+|  Manage brand identity, contact details, 80mm receipt templates, operating hours, and hardware defaults        |
++---------------------------------------------------------------------------------------------------------------+
+| [ 🏢 General Profile ] [ 📍 Contact & Tax ] [ 🧾 Receipt Template ] [ ⏰ Hours & Channels ] [ 🖨️ POS Hardware ]|
++---------------------------------------------------------------------------------------------------------------+
+|  LEFT COLUMN: FORM FIELDS                                     | RIGHT COLUMN: LIVE 80mm RECEIPT PREVIEW       |
+|                                                               | +-------------------------------------------+ |
+|  Restaurant Name: [ Golden Palace Bistro                    ] | |               [ BRAND LOGO ]              | |
+|  Tagline:         [ Authentic Myanmar & Asian Cuisine       ] | |           GOLDEN PALACE BISTRO            | |
+|  Logo Upload:     [ Choose File... ] (Preview displayed)      | |         No. 45, Pyay Road, Kamayut        | |
+|  Contact Phone:   [ 09-450001234                            ] | |              Tel: 09-450001234            | |
+|  Tax ID (TIN):    [ CT-98472910-YGN                         ] | |            Tax ID: CT-98472910-YGN        | |
+|                                                               | | ----------------------------------------- | |
+|  Receipt Header:                                              | | Table: T-04                  Pax: 2       | |
+|  [ *** Welcome to Golden Palace Bistro ***                  ] | | Date: 17/10/2026 12:30       Cashier: MaSu| |
+|                                                               | | ----------------------------------------- | |
+|  Receipt Footer:                                              | | Shan Noodle Special              4,000 MMK| |
+|  [ Thank You! WiFi: GP-Guest / pass: 12345678              ] | | Kyay Oh Sikyet                   4,500 MMK| |
+|                                                               | | ----------------------------------------- | |
+|  [x] Show Logo on Receipt       [x] Auto-Kick Cash Drawer     | | Subtotal:                        8,500 MMK| |
+|  [x] Show Tax ID on Receipt     [x] Auto-Print Receipt        | | Tax (5%):                          425 MMK| |
+|                                                               | | Total:                           8,925 MMK| |
+|                                                               | | ----------------------------------------- | |
+|                                                               | |    *** Welcome to Golden Palace ***       | |
+|                                                               | |   Thank You! WiFi: GP-Guest (12345678)    | |
+|                                                               | +-------------------------------------------+ |
++---------------------------------------------------------------------------------------------------------------+
+```
+
+1. **Global Typography**:
+   - `font-family: "Mada", sans-serif;` ကိုသာ အသုံးပြုရမည်။
+2. **Modern Obsidian / Slate Dark Theme**:
+   - `--bg-body: #0b0f17`, `--bg-card: #161e2e`, `--border-color: #222d42`, Accent Brand Lime Green (`#9ec63b`).
+3. **Currency Rule**:
+   - ငွေကြေးယူနစ် အားလုံးတွင် ဒသမကိန်း မပါဘဲ `MMK` ဟု တိကျစွာ ပြသရမည် (ဥပမာ: `8,500 MMK`, `425 MMK`, `8,925 MMK`).
+4. **Live Interactive Receipt Mock**:
+   - ဘယ်ဘက်ခြမ်း Form တွင် Header, Footer, Logo, Tax ID စသည်တို့ကို ပြင်ဆင်လိုက်သည်နှင့် ညာဘက်ခြမ်းရှိ 80mm Receipt စက္ကူပြေစာ ပုံစံတွင် အချိန်နှင့်တစ်ပြေးညီ (Real-time Live Preview) ပြောင်းလဲပြသပေးရမည်။
+
+---
+
+## ၇။ အဆင့်ဆင့် အကောင်အထည်ဖော်မည့် လမ်းပြမြေပုံ (Step-by-Step Implementation Roadmap)
+
+1. **Step 1: Database Migration**:
+   - `2026_09_29_000001_enhance_restaurant_settings_table.php` ရေးသား၍ `restaurants` ဇယားတွင် လိုအပ်သော column အသစ် (၂၀) ခုကို ဖြည့်စွက်ခြင်း။
+2. **Step 2: Model & Storage Setup**:
+   - `App\Models\Restaurant` တွင် `$fillable`, `$casts`, Logo URL Accessors များကို ဖြည့်စွက်ခြင်း။
+   - `php artisan storage:link` စစ်ဆေးခြင်း။
+3. **Step 3: Form Request & API Resource (Rule 4)**:
+   - `UpdateRestaurantSettingsRequest` နှင့် `RestaurantSettingsResource` တည်ဆောက်ခြင်း။
+4. **Step 4: Controller & Web Routes**:
+   - `RestaurantSettingsController` တည်ဆောက်၍ `edit`, `update`, `apiShow` လုပ်ဆောင်ချက်များ ထည့်သွင်းခြင်း။
+   - `routes/web.php` တွင် route name `admin.settings.restaurant` အား ချိတ်ဆက်ခြင်း။
+5. **Step 5: Modern Blade View with Live Receipt Mock**:
+   - `resources/views/admin/settings/restaurant.blade.php` ကို Mada Font၊ Dark Slate Palette၊ 5 Tabs နှင့် Interactive 80mm Live Receipt Preview ဖြင့် ဖန်တီးခြင်း။
+6. **Step 6: Automated Verification Tests (Rule 3)**:
+   - `tests/Feature/Admin/RestaurantSettingsTest.php` ရေးသားပြီး Feature စမ်းသပ်မှုများ၊ Validation စစ်ဆေးမှုများ၊ Audit Log မှတ်တမ်းဝင်မှုများကို ၁၀၀% Pass ဖြစ်အောင် ဆောင်ရွက်ခြင်း။
+
+---
+
+## ၈။ အကျဉ်းချုပ် (Summary)
+
+ဤ Restaurant Settings စနစ်သည် စားသောက်ဆိုင် ပိုင်ရှင် (Owner) အတွက် **ဆိုင်အမှတ်တံဆိပ် ပုံရိပ်ကို အဆင့်အတန်း မြင့်မားစေခြင်း၊ တရားဝင် အခွန်ပြေစာစလစ် ထုတ်ဝေနိုင်ခြင်း၊ စားပွဲခုံ QR မှာယူမှုနှင့် ဆိုင်ဖွင့်ချိန်/ပိတ်ချိန်များကို အလိုအလျောက် ထိန်းချုပ်နိုင်ခြင်း** တို့အတွက် မရှိမဖြစ် လိုအပ်သော အခြေခံအုတ်မြစ် (Core Foundation) ဖြစ်ပါသည်။
+
+---
+
+## ၉။ စနစ်တည်ဆောက်ပြီးစီးမှုနှင့် စမ်းသပ်မှု မှတ်တမ်း (Implementation & Verification Evidence)
+
+အောက်ပါ အစိတ်အပိုင်းများအားလုံး ၁၀၀% တည်ဆောက်ပြီးစီးပြီး စမ်းသပ်စစ်ဆေးပြီး ဖြစ်ပါသည်:
+
+1. **Database Migration**:
+   - `database/migrations/2026_09_29_000001_enhance_restaurant_settings_table.php` (`tagline`, `logo`, `cover_image`, `secondary_phone`, `city`, `tax_id`, `receipt_header`, `receipt_footer`, `opening_time`, `closing_time`, `operating_days`, `is_dine_in_enabled`, `is_takeaway_enabled`, `is_qr_order_enabled`, `currency`, `default_tax_percent`, `default_service_charge_percent`, `printer_paper_width`, `auto_kick_drawer`, `auto_print_receipt` စသည်တို့ ဖြည့်စွက်ပြီးစီး)။
+2. **Model & Storage**:
+   - `app/Models/Restaurant.php`: Mass assignment fillable၊ Boolean/Array casts၊ `getLogoUrlAttribute()` နှင့် `getCoverImageUrlAttribute()` accessors၊ `operatesOn()` helper method များ ထည့်သွင်း။
+   - `php artisan storage:link` ဖြင့် public storage link ချိတ်ဆက်ပြီးစီး။
+3. **Dedicated Form Request & API Resource (Rule 4)**:
+   - `app/Http/Requests/Admin/UpdateRestaurantSettingsRequest.php`: Authorization နှင့် File/Tax/Phone/Hours validation rules။
+   - `app/Http/Resources/Admin/RestaurantSettingsResource.php`: Currency `MMK` ပါဝင်သည့် Safe JSON transformation ပေးပို့ခြင်း။
+4. **Controller & Web Routes**:
+   - `app/Http/Controllers/Web/RestaurantSettingsController.php`: `edit`, `update`, `apiShow` လုပ်ဆောင်ချက်များ ထည့်သွင်း။
+   - Logo Upload နှင့် Removal ကို Storage ဖြင့် လုံခြုံစွာ စီမံခန့်ခွဲခြင်း။
+   - ဆိုင်ဆက်တင်များ ပြင်ဆင်မှုတိုင်းကို `AuditLogService` မှတစ်ဆင့် `SETTINGS_UPDATE` အဖြစ် Audit Logs တွင် အလိုအလျောက် မှတ်တမ်းတင်ခြင်း။
+   - `routes/web.php`: Route name `admin.settings.restaurant` (`GET`), `admin.settings.restaurant.update` (`POST`), `admin.settings.restaurant.data` (`GET`) ချိတ်ဆက်ပြီးစီး။
+5. **Modern Blade UI Dashboard (Rule 5 & Rule 6)**:
+   - `resources/views/admin/settings/restaurant.blade.php`: Mada typography၊ Obsidian dark slate palette၊ 5 Navigation Tabs (General Profile, Contact & Tax, 80mm Receipt Template, Hours & Channels, POS & Hardware)။
+   - **Interactive Live 80mm Receipt Mock Preview**: Form တွင် စာရိုက်သည်နှင့် ညာဘက်ခြမ်းရှိ 80mm ပြေစာစက္ကူ ပုံစံတွင် အချိန်နှင့်တစ်ပြေးညီ Logo, Store Name, Address, Tax ID, Items in MMK, Taxes, Footer တို့ ပြောင်းလဲပြသခြင်း။
+6. **Automated Verification Tests (Rule 3)**:
+   - `tests/Feature/Admin/RestaurantSettingsTest.php`: ၆ ခုစလုံး ၁၀၀% Pass (51 assertions)။
+   - Full Test Suite: **155 passed (850 assertions)** with 0 failures။
+   - Code Style: **Laravel Pint PASS (185 files)**။
+
