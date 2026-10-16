@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\AccountSecurityController;
 use App\Http\Controllers\Web\AdminAuthController;
 use App\Http\Controllers\Web\AdminDashboardController;
 use App\Http\Controllers\Web\AdminModuleController;
@@ -54,7 +55,16 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/audit-logs/export', [AuditLogController::class, 'exportCsv'])->name('audit.logs.export');
     Route::get('/audit-logs/data', [AuditLogController::class, 'apiData'])->name('audit.logs.data');
     Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit.logs.show');
-    Route::get('/account/security', [AdminModuleController::class, 'show'])->defaults('module', 'account-security')->name('account.security');
+    // Account Security & Governance Module
+    Route::get('/account/security', [AccountSecurityController::class, 'show'])->name('account.security');
+    Route::put('/account/security/password', [AccountSecurityController::class, 'updatePassword'])->name('account.security.password');
+    Route::put('/account/security/pin', [AccountSecurityController::class, 'updatePin'])->name('account.security.pin');
+    Route::post('/account/security/two-factor/enable', [AccountSecurityController::class, 'enableTwoFactor'])->name('account.security.2fa.enable');
+    Route::post('/account/security/two-factor/confirm', [AccountSecurityController::class, 'confirmTwoFactor'])->name('account.security.2fa.confirm');
+    Route::delete('/account/security/two-factor', [AccountSecurityController::class, 'disableTwoFactor'])->name('account.security.2fa.disable');
+    Route::delete('/account/security/sessions/{session_id}', [AccountSecurityController::class, 'revokeSession'])->name('account.security.sessions.revoke');
+    Route::post('/account/security/sessions/logout-others', [AccountSecurityController::class, 'logoutOtherDevices'])->name('account.security.sessions.logout-others');
+    Route::get('/account/security/backup/download', [AccountSecurityController::class, 'downloadBackup'])->name('account.security.backup.download');
 });
 
 // Operations Management: Accessible by OWNER & MANAGER
