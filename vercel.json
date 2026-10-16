@@ -43,15 +43,20 @@
     }
   ],
   "env": {
+    "APP_NAME": "Restaurant POS",
     "APP_ENV": "production",
+    "APP_KEY": "base64:qR/4eW/gtmnqdjqj9xnIEXrGB4K9aWOD63ss0qwMZ5c=",
+    "APP_DEBUG": "true",
+    "APP_URL": "https://res-backend-pos.vercel.app",
+    "SESSION_DRIVER": "cookie",
+    "CACHE_STORE": "array",
+    "QUEUE_CONNECTION": "sync",
+    "LOG_CHANNEL": "stderr",
     "APP_CONFIG_CACHE": "/tmp/config.php",
     "APP_EVENTS_CACHE": "/tmp/events.php",
     "APP_PACKAGES_CACHE": "/tmp/packages.php",
     "APP_ROUTES_CACHE": "/tmp/routes.php",
     "APP_SERVICES_CACHE": "/tmp/services.php",
-    "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
-    "CACHE_STORE": "array",
-    "SESSION_DRIVER": "cookie",
-    "LOG_CHANNEL": "stderr"
+    "VIEW_COMPILED_PATH": "/tmp/storage/framework/views"
   }
 }
