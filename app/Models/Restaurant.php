@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Restaurant extends Model
 {
@@ -19,9 +20,34 @@ class Restaurant extends Model
     protected $fillable = [
         'name',
         'slug',
+        'tagline',
+        'logo',
+        'cover_image',
         'phone',
+        'secondary_phone',
         'email',
         'address',
+        'city',
+        'state',
+        'postal_code',
+        'tax_id',
+        'receipt_header',
+        'receipt_footer',
+        'show_logo_on_receipt',
+        'show_tax_id_on_receipt',
+        'opening_time',
+        'closing_time',
+        'operating_days',
+        'is_dine_in_enabled',
+        'is_takeaway_enabled',
+        'is_qr_order_enabled',
+        'currency',
+        'currency_symbol',
+        'default_tax_percent',
+        'default_service_charge_percent',
+        'printer_paper_width',
+        'auto_kick_drawer',
+        'auto_print_receipt',
         'is_active',
     ];
 
@@ -34,7 +60,61 @@ class Restaurant extends Model
     {
         return [
             'is_active' => 'boolean',
+            'show_logo_on_receipt' => 'boolean',
+            'show_tax_id_on_receipt' => 'boolean',
+            'is_dine_in_enabled' => 'boolean',
+            'is_takeaway_enabled' => 'boolean',
+            'is_qr_order_enabled' => 'boolean',
+            'auto_kick_drawer' => 'boolean',
+            'auto_print_receipt' => 'boolean',
+            'operating_days' => 'array',
+            'default_tax_percent' => 'float',
+            'default_service_charge_percent' => 'float',
         ];
+    }
+
+    /**
+     * Accessor for full logo URL.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo) {
+            return null;
+        }
+
+        if (filter_var($this->logo, FILTER_VALIDATE_URL)) {
+            return $this->logo;
+        }
+
+        return Storage::url($this->logo);
+    }
+
+    /**
+     * Accessor for full cover image URL.
+     */
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        if (! $this->cover_image) {
+            return null;
+        }
+
+        if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
+            return $this->cover_image;
+        }
+
+        return Storage::url($this->cover_image);
+    }
+
+    /**
+     * Check if restaurant is operating on a specific day code (e.g. 'MON', 'TUE').
+     */
+    public function operatesOn(string $dayCode): bool
+    {
+        if (empty($this->operating_days)) {
+            return true;
+        }
+
+        return in_array(strtoupper($dayCode), $this->operating_days, true);
     }
 
     /**
