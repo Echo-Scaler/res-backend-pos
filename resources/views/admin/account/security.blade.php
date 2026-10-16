@@ -52,7 +52,7 @@
         padding: 0.65rem 1.25rem;
         background: rgba(158, 198, 59, 0.12);
         color: #2e5902;
-        border: 1px solid rgba(158, 198, 59, 0.4);
+        border: 1.5px solid rgba(158, 198, 59, 0.4);
         font-size: 0.875rem;
         font-weight: 700;
         border-radius: 8px;
@@ -197,52 +197,34 @@
         font-size: 0.8125rem;
         font-weight: 600;
         color: var(--text-main);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.45rem;
     }
 
     /* Clean Adaptive Input Styling (Light & Dark Compatible) */
     .form-control {
         width: 100%;
-        padding: 0.7rem 0.9rem;
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
+        padding: 0.7rem 0.95rem;
+        background: var(--bg-body);
+        border: 1.5px solid var(--border-color);
         border-radius: 8px;
-        color: #0f172a;
+        color: var(--text-main);
         font-family: "Mada", sans-serif;
         font-size: 0.9rem;
         font-weight: 500;
         outline: none;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .form-control::placeholder {
-        color: #94a3b8;
-        font-weight: 400;
+        color: var(--text-muted);
+        opacity: 0.75;
     }
 
     .form-control:focus {
         border-color: var(--primary);
-        background: #ffffff;
-        color: #0f172a;
-        box-shadow: 0 0 0 3px rgba(158, 198, 59, 0.2);
-    }
-
-    [data-theme="dark"] .form-control {
-        background: #0f1623;
-        border-color: #222d42;
-        color: #f1f5f9;
-        box-shadow: none;
-    }
-
-    [data-theme="dark"] .form-control::placeholder {
-        color: #64748b;
-    }
-
-    [data-theme="dark"] .form-control:focus {
-        background: #161e2e;
-        border-color: var(--primary);
-        color: #f1f5f9;
+        background: var(--bg-card);
+        color: var(--text-main);
         box-shadow: 0 0 0 3px rgba(158, 198, 59, 0.2);
     }
 
@@ -263,7 +245,7 @@
         right: 0.75rem;
         background: transparent;
         border: none;
-        color: #64748b;
+        color: var(--text-muted);
         font-size: 1.15rem;
         cursor: pointer;
         padding: 0.25rem;
@@ -312,11 +294,6 @@
         border-radius: 10px;
         margin-bottom: 0.75rem;
         transition: all 0.2s ease;
-    }
-
-    [data-theme="dark"] .session-item {
-        background: rgba(15, 22, 35, 0.6);
-        border-color: #222d42;
     }
 
     .session-item:hover {
@@ -423,20 +400,19 @@
 
     .secret-key-badge {
         display: inline-block;
-        padding: 0.5rem 1rem;
-        background: #f8fafc;
+        padding: 0.5rem 1.25rem;
+        background: rgba(158, 198, 59, 0.12);
         border: 1.5px dashed var(--primary);
-        color: #1e3a10;
+        color: var(--text-main);
         font-family: monospace;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         letter-spacing: 0.15em;
-        font-weight: 700;
+        font-weight: 800;
         border-radius: 8px;
         margin-bottom: 1rem;
     }
 
     [data-theme="dark"] .secret-key-badge {
-        background: #0f1623;
         color: var(--primary);
     }
 
@@ -448,31 +424,21 @@
         padding: 0.85rem;
         border-radius: 8px;
         margin: 1rem 0;
-        border: 1px solid var(--border-color);
-    }
-
-    [data-theme="dark"] .recovery-code-grid {
-        background: #0f1623;
-        border-color: #222d42;
+        border: 1.5px solid var(--border-color);
     }
 
     .recovery-code-pill {
         font-family: monospace;
-        font-size: 0.875rem;
+        font-size: 0.9rem;
         font-weight: 700;
         color: var(--text-main);
-        padding: 0.45rem 0.65rem;
+        padding: 0.5rem 0.75rem;
         background: var(--bg-card);
         border: 1px solid var(--border-color);
         border-radius: 6px;
         text-align: center;
-        letter-spacing: 0.05em;
-    }
-
-    [data-theme="dark"] .recovery-code-pill {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: #222d42;
-        color: #f1f5f9;
+        letter-spacing: 0.08em;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     /* Security Log Table with High-Contrast Header (Light & Dark) */
@@ -484,20 +450,19 @@
     }
 
     .audit-table th {
-        padding: 0.875rem 1rem;
-        background: #f1f5f9;
-        color: #475569;
+        padding: 0.85rem 1rem;
+        background: rgba(0, 0, 0, 0.03);
+        color: var(--text-muted);
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1.5px solid var(--border-color);
     }
 
     [data-theme="dark"] .audit-table th {
-        background: #111724;
+        background: rgba(255, 255, 255, 0.04);
         color: #94a3b8;
-        border-bottom-color: #222d42;
     }
 
     .audit-table td {
@@ -505,10 +470,6 @@
         border-bottom: 1px solid var(--border-color);
         color: var(--text-main);
         vertical-align: middle;
-    }
-
-    [data-theme="dark"] .audit-table td {
-        border-bottom-color: #222d42;
     }
 
     .audit-table tbody tr:hover {
