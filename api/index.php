@@ -22,13 +22,21 @@ foreach ($serverlessDirs as $dir) {
     }
 }
 
+// Copy pre-seeded SQLite database to writable /tmp directory if not using remote DB_HOST
+$tmpDb = '/tmp/database.sqlite';
+$bundledDb = __DIR__.'/../database/database.sqlite';
+
+if (! file_exists($tmpDb) && file_exists($bundledDb)) {
+    @copy($bundledDb, $tmpDb);
+}
+
 // Auto-inject default environment variables so deployment works without manual Vercel UI configuration
 $defaultEnvs = [
     'APP_NAME' => 'Restaurant POS',
     'APP_ENV' => 'production',
     'APP_KEY' => 'base64:qR/4eW/gtmnqdjqj9xnIEXrGB4K9aWOD63ss0qwMZ5c=',
     'APP_DEBUG' => 'true',
-    'APP_URL' => 'https://res-backend-pos.vercel.app',
+    'APP_URL' => 'https://res-backend-pos-khaki.vercel.app',
     'SESSION_DRIVER' => 'cookie',
     'CACHE_STORE' => 'array',
     'QUEUE_CONNECTION' => 'sync',
@@ -42,6 +50,16 @@ foreach ($defaultEnvs as $key => $val) {
         $_ENV[$key] = $val;
         $_SERVER[$key] = $val;
     }
+}
+
+// If DB_HOST is not provided, fall back to SQLite in /tmp
+if (getenv('DB_HOST') === false || getenv('DB_HOST') === '') {
+    putenv('DB_CONNECTION=sqlite');
+    putenv('DB_DATABASE=/tmp/database.sqlite');
+    $_ENV['DB_CONNECTION'] = 'sqlite';
+    $_ENV['DB_DATABASE'] = '/tmp/database.sqlite';
+    $_SERVER['DB_CONNECTION'] = 'sqlite';
+    $_SERVER['DB_DATABASE'] = '/tmp/database.sqlite';
 }
 
 // Enforce HTTPS server variables when running behind Vercel edge proxy
