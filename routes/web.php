@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\AdminAuthController;
 use App\Http\Controllers\Web\AdminDashboardController;
 use App\Http\Controllers\Web\AdminModuleController;
+use App\Http\Controllers\Web\AuditLogController;
 use App\Http\Controllers\Web\CashDrawerController;
 use App\Http\Controllers\Web\CashierCheckoutController;
 use App\Http\Controllers\Web\CustomerOrderController;
@@ -46,7 +47,10 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
     Route::get('/settings/tax', [AdminModuleController::class, 'show'])->defaults('module', 'tax-settings')->name('settings.tax');
     Route::get('/settings/business', [AdminModuleController::class, 'show'])->defaults('module', 'business-settings')->name('settings.business');
-    Route::get('/audit-logs', [AdminModuleController::class, 'show'])->defaults('module', 'audit-logs')->name('audit.logs');
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
+    Route::get('/audit-logs/export', [AuditLogController::class, 'exportCsv'])->name('audit.logs.export');
+    Route::get('/audit-logs/data', [AuditLogController::class, 'apiData'])->name('audit.logs.data');
+    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit.logs.show');
     Route::get('/account/security', [AdminModuleController::class, 'show'])->defaults('module', 'account-security')->name('account.security');
 });
 

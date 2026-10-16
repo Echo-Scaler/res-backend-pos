@@ -59,9 +59,20 @@ class CashDrawerController extends Controller
             'restaurant_id' => $restaurant->id,
             'user_id' => $user->id,
             'user_name' => $user->name,
+            'role_name' => $user->roles->first()?->name ?? 'CASHIER',
             'action' => 'OPEN_CASH_DRAWER_SHIFT',
-            'description' => "Cashier {$user->name} opened shift ({$session->terminal_code}) with float ".number_format($session->opening_float, 0).' MMK',
+            'category' => AuditLog::CATEGORY_FINANCIAL,
+            'severity' => AuditLog::SEVERITY_INFO,
+            'resource_type' => 'CashDrawerSession',
+            'resource_id' => $session->id,
+            'new_value' => 'Shift Opened: '.$session->terminal_code.' with Float '.number_format($session->opening_float, 0).' MMK',
+            'metadata' => [
+                'terminal_code' => $session->terminal_code,
+                'opening_float' => $session->opening_float,
+                'currency' => 'MMK',
+            ],
             'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ]);
 
         if ($request->wantsJson()) {
@@ -125,9 +136,22 @@ class CashDrawerController extends Controller
             'restaurant_id' => $restaurant->id,
             'user_id' => $user->id,
             'user_name' => $user->name,
+            'role_name' => $user->roles->first()?->name ?? 'CASHIER',
             'action' => $type === 'CASH_IN' ? 'DRAWER_CASH_IN' : 'DRAWER_CASH_OUT',
-            'description' => "Cashier {$user->name} recorded {$type} of ".number_format($amount, 0)." MMK ({$reason})",
+            'category' => AuditLog::CATEGORY_FINANCIAL,
+            'severity' => $type === 'CASH_OUT' ? AuditLog::SEVERITY_WARNING : AuditLog::SEVERITY_INFO,
+            'resource_type' => 'CashDrawerTransaction',
+            'resource_id' => $tx->id,
+            'new_value' => $type.' of '.number_format($amount, 0).' MMK (Reason: '.$reason.')',
+            'metadata' => [
+                'type' => $type,
+                'amount' => $amount,
+                'reason' => $reason,
+                'terminal_code' => $session->terminal_code,
+                'currency' => 'MMK',
+            ],
             'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ]);
 
         $successMsg = $type === 'CASH_IN'
@@ -185,9 +209,23 @@ class CashDrawerController extends Controller
             'restaurant_id' => $restaurant->id,
             'user_id' => $user->id,
             'user_name' => $user->name,
+            'role_name' => $user->roles->first()?->name ?? 'CASHIER',
             'action' => 'CLOSE_CASH_DRAWER_SHIFT',
-            'description' => "Cashier {$user->name} closed shift ({$session->terminal_code}). Expected: ".number_format($session->expected_cash, 0).' MMK, Actual: '.number_format($actualCash, 0).' MMK, Diff: '.number_format($difference, 0).' MMK',
+            'category' => AuditLog::CATEGORY_FINANCIAL,
+            'severity' => abs($difference) > 0 ? AuditLog::SEVERITY_CRITICAL : AuditLog::SEVERITY_INFO,
+            'resource_type' => 'CashDrawerSession',
+            'resource_id' => $session->id,
+            'old_value' => 'Expected Cash: '.number_format($session->expected_cash, 0).' MMK',
+            'new_value' => 'Actual Count: '.number_format($actualCash, 0).' MMK (Diff: '.number_format($difference, 0).' MMK)',
+            'metadata' => [
+                'expected_cash' => $session->expected_cash,
+                'actual_cash' => $actualCash,
+                'difference' => $difference,
+                'terminal_code' => $session->terminal_code,
+                'currency' => 'MMK',
+            ],
             'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ]);
 
         if ($request->wantsJson()) {
