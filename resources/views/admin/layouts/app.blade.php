@@ -17,7 +17,7 @@
     <!-- ApexCharts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-    <style>
+    <style id="base-app-styles">
         :root {
             /* Exact Soft Ambient Light Palette */
             --bg-body: #f8fafc;
@@ -1546,6 +1546,27 @@
                     if (doc.title) {
                         document.title = doc.title;
                     }
+
+                    // Swap page-specific styles from fetched <head> so all pages render with 100% styled UI
+                    document.querySelectorAll('head style[data-page-style], head link[data-page-style]').forEach(el => el.remove());
+                    const fetchedStyles = Array.from(doc.querySelectorAll('head style:not(#base-app-styles)'));
+                    fetchedStyles.forEach(style => {
+                        const newStyle = document.createElement('style');
+                        newStyle.setAttribute('data-page-style', 'true');
+                        newStyle.textContent = style.textContent;
+                        document.head.appendChild(newStyle);
+                    });
+                    const fetchedLinks = Array.from(doc.querySelectorAll('head link[rel="stylesheet"]:not([data-permanent])'));
+                    fetchedLinks.forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href && !document.querySelector(`head link[href="${href}"]`)) {
+                            const newLink = document.createElement('link');
+                            newLink.setAttribute('rel', 'stylesheet');
+                            newLink.setAttribute('href', href);
+                            newLink.setAttribute('data-page-style', 'true');
+                            document.head.appendChild(newLink);
+                        }
+                    });
 
                     // Replace main content seamlessly
                     mainContent.innerHTML = newMain.innerHTML;
