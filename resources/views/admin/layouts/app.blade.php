@@ -1583,6 +1583,14 @@
                     });
 
                     endProgress();
+
+                    // Close mobile sidebar if open on smaller screens
+                    if (window.innerWidth <= 1024 && typeof closeMobileSidebar === 'function') {
+                        closeMobileSidebar();
+                    }
+
+                    // Re-dispatch DOMContentLoaded for page script handlers
+                    document.dispatchEvent(new Event('DOMContentLoaded'));
                     document.dispatchEvent(new CustomEvent('spa:page-loaded', { detail: { url } }));
                 } catch (err) {
                     if (err.name === 'AbortError') return;

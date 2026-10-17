@@ -2095,7 +2095,10 @@
         const primaryColor = '#9ec63b';
         const darkForestColor = '#0c2617';
         const oliveColor = '#5c8623';
-        const successColor = '#7ea826';
+        // Clear previous chart DOM to prevent duplicates on SPA navigation
+        document.querySelectorAll('#sparkline-sales, #sparkline-orders, #sparkline-aov, #sparkline-occupancy, #chart-pos-revenue-trend, #chart-pos-peak-hours, #chart-revenue-weekly, #chart-payment-donut').forEach(el => {
+            if (el) el.innerHTML = '';
+        });
 
         // 1. Sparkline 1: Today's Sales
         new ApexCharts(document.querySelector("#sparkline-sales"), {
