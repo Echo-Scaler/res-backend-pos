@@ -12,6 +12,7 @@ use App\Http\Controllers\Web\DiningTableController;
 use App\Http\Controllers\Web\EmployeeController;
 use App\Http\Controllers\Web\ExpenseController;
 use App\Http\Controllers\Web\InventoryController;
+use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\MenuController;
 use App\Http\Controllers\Web\OrderVerificationController;
 use App\Http\Controllers\Web\ReportController;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AdminAuthController::class, 'showLoginForm'])->name('home');
 
 // Authentication Routes
+Route::get('/lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
