@@ -955,6 +955,28 @@
             </div>
 
             <div class="header-right">
+                <!-- Language Switcher Dropdown (Myanmar & English) -->
+                @php
+                    $currentLocale = app()->getLocale();
+                @endphp
+                <div class="dropdown" id="dropdown-language">
+                    <button type="button" class="header-btn" title="{{ __('Language') }}" style="gap: 0.35rem; width: auto; padding: 0 0.65rem; font-weight: 700; font-size: 0.8rem;">
+                        <span style="font-size: 1rem;">{{ $currentLocale === 'my' ? '🇲🇲' : '🇬🇧' }}</span>
+                        <span>{{ $currentLocale === 'my' ? 'မြန်မာ' : 'EN' }}</span>
+                        <i class="ti ti-chevron-down" style="font-size: 0.75rem;"></i>
+                    </button>
+                    <div class="dropdown-menu" style="width: 150px; right: 0;">
+                        <a href="{{ route('lang.switch', 'en') }}" class="dropdown-item {{ $currentLocale !== 'my' ? 'active' : '' }}" style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>🇬🇧 English</span>
+                            @if($currentLocale !== 'my') <i class="ti ti-check" style="color: var(--primary);"></i> @endif
+                        </a>
+                        <a href="{{ route('lang.switch', 'my') }}" class="dropdown-item {{ $currentLocale === 'my' ? 'active' : '' }}" style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>🇲🇲 မြန်မာ</span>
+                            @if($currentLocale === 'my') <i class="ti ti-check" style="color: var(--primary);"></i> @endif
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Theme Mode Toggle -->
                 <button type="button" class="header-btn" id="theme-toggle" title="Toggle Dark/Light Mode">
                     <i class="ti ti-moon" id="theme-icon"></i>
@@ -1089,25 +1111,25 @@
 
         <!-- PreAdmin Collapsible Left Sidebar -->
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-section-title">Main</div>
+            <div class="sidebar-section-title">{{ __('Main') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-layout-dashboard"></i>
-                            <span>Dashboard</span>
+                            <span>{{ __('Dashboard') }}</span>
                         </div>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-section-title">Orders & Dining</div>
+            <div class="sidebar-section-title">{{ __('Orders & Dining') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-receipt"></i>
-                            <span>Kitchen Pass & Check</span>
+                            <span>{{ __('Kitchen Pass & Check') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1115,7 +1137,7 @@
                     <a href="{{ route('admin.tables.index') }}" class="sidebar-link {{ request()->routeIs('admin.tables.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-layout-grid"></i>
-                            <span>Table Floor Plan</span>
+                            <span>{{ __('Table Floor Plan') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1123,19 +1145,19 @@
                     <a href="{{ route('admin.menu.index') }}" class="sidebar-link {{ request()->routeIs('admin.menu.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-tools-kitchen-2"></i>
-                            <span>Menu & Products</span>
+                            <span>{{ __('Menu & Products') }}</span>
                         </div>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-section-title">Finance & Accounts</div>
+            <div class="sidebar-section-title">{{ __('Finance & Accounts') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.payments.index') }}" class="sidebar-link {{ request()->routeIs('admin.payments.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-credit-card"></i>
-                            <span>Payments & Drawers</span>
+                            <span>{{ __('Payments & Drawers') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1143,7 +1165,7 @@
                     <a href="{{ route('admin.expenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-cash-register"></i>
-                            <span>Expense Tracker</span>
+                            <span>{{ __('Expense Tracker') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1151,19 +1173,19 @@
                     <a href="{{ route('admin.reports.index') }}" class="sidebar-link {{ request()->routeIs('admin.reports.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-chart-bar"></i>
-                            <span>Reports & Analytics</span>
+                            <span>{{ __('Reports & Analytics') }}</span>
                         </div>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-section-title">Management & Staff</div>
+            <div class="sidebar-section-title">{{ __('Management & Staff') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.employees.index') }}" class="sidebar-link {{ request()->routeIs('admin.employees.*') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-users-group"></i>
-                            <span>Employee Directory</span>
+                            <span>{{ __('Employee Directory') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1171,7 +1193,7 @@
                     <a href="{{ route('admin.roles.permissions') }}" class="sidebar-link {{ request()->routeIs('admin.roles.permissions') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-shield-lock"></i>
-                            <span>Roles & Permissions</span>
+                            <span>{{ __('Roles & Permissions') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1179,32 +1201,32 @@
                     <a href="{{ route('admin.customers.index') }}" class="sidebar-link {{ request()->routeIs('admin.customers.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-user-heart"></i>
-                            <span>Customer CRM</span>
+                            <span>{{ __('Customer CRM') }}</span>
                         </div>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-section-title">Kitchen & Stock</div>
+            <div class="sidebar-section-title">{{ __('Kitchen & Stock') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.inventory.index') }}" class="sidebar-link {{ request()->routeIs('admin.inventory.index') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-packages"></i>
-                            <span>Inventory Stock</span>
+                            <span>{{ __('Inventory Stock') }}</span>
                         </div>
                         <span class="sidebar-badge" style="background: var(--danger-light); color: var(--danger);">4</span>
                     </a>
                 </li>
             </ul>
 
-            <div class="sidebar-section-title">System & Settings</div>
+            <div class="sidebar-section-title">{{ __('System & Settings') }}</div>
             <ul class="sidebar-nav-list">
                 <li>
                     <a href="{{ route('admin.settings.restaurant') }}" class="sidebar-link {{ request()->routeIs('admin.settings.restaurant') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-building-store"></i>
-                            <span>Restaurant Profile</span>
+                            <span>{{ __('Restaurant Profile') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1212,7 +1234,7 @@
                     <a href="{{ route('admin.settings.tax') }}" class="sidebar-link {{ request()->routeIs('admin.settings.tax') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-receipt-tax"></i>
-                            <span>Tax & Service Charge</span>
+                            <span>{{ __('Tax & Service Charge') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1220,7 +1242,7 @@
                     <a href="{{ route('admin.settings.business') }}" class="sidebar-link {{ request()->routeIs('admin.settings.business') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-printer"></i>
-                            <span>Printers & Business</span>
+                            <span>{{ __('Printers & Business') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1228,7 +1250,7 @@
                     <a href="{{ route('admin.audit.logs') }}" class="sidebar-link {{ request()->routeIs('admin.audit.logs') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-file-text"></i>
-                            <span>Audit Trail Logs</span>
+                            <span>{{ __('Audit Trail Logs') }}</span>
                         </div>
                     </a>
                 </li>
@@ -1236,7 +1258,7 @@
                     <a href="{{ route('admin.account.security') }}" class="sidebar-link {{ request()->routeIs('admin.account.security') ? 'active' : '' }}">
                         <div class="sidebar-link-content">
                             <i class="ti ti-lock-check"></i>
-                            <span>Security & Account</span>
+                            <span>{{ __('Security & Account') }}</span>
                         </div>
                     </a>
                 </li>
