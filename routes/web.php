@@ -20,6 +20,7 @@ use App\Http\Controllers\Web\RestaurantSettingsController;
 use App\Http\Controllers\Web\RoleDashboardController;
 use App\Http\Controllers\Web\RolePermissionController;
 use App\Http\Controllers\Web\StaffFloorController;
+use App\Http\Controllers\Web\TaxServiceSettingController;
 use Illuminate\Support\Facades\Route;
 
 // Root route redirects to role dashboard if authenticated, or login
@@ -50,7 +51,10 @@ Route::middleware(['auth', 'role:OWNER'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/data', [ReportController::class, 'apiData'])->name('reports.data');
     Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
-    Route::get('/settings/tax', [AdminModuleController::class, 'show'])->defaults('module', 'tax-settings')->name('settings.tax');
+    Route::get('/settings/tax', [TaxServiceSettingController::class, 'edit'])->name('settings.tax');
+    Route::post('/settings/tax', [TaxServiceSettingController::class, 'update'])->name('settings.tax.update');
+    Route::get('/settings/tax/data', [TaxServiceSettingController::class, 'apiData'])->name('settings.tax.data');
+    Route::post('/settings/tax/simulate', [TaxServiceSettingController::class, 'simulate'])->name('settings.tax.simulate');
     Route::get('/settings/business', [AdminModuleController::class, 'show'])->defaults('module', 'business-settings')->name('settings.business');
     Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit.logs');
     Route::get('/audit-logs/export', [AuditLogController::class, 'exportCsv'])->name('audit.logs.export');
