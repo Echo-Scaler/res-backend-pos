@@ -26,29 +26,27 @@
 
 ---
 
-## ၁။ လက်ရှိ Codebase အခြေအနေ စစ်ဆေးချက် (Current System Audit)
+## ၁။ လက်ရှိ Codebase အခြေအနေ စစ်ဆေးချက်နှင့် ဖြေရှင်းပြီးစီးမှု (Current System Audit & Resolution)
 
-လက်ရှိ `backendPos` စနစ်အား စစ်ဆေးခဲ့ရာတွင် အောက်ပါ အချက်အလက်များကို တွေ့ရှိရပါသည်:
+လက်ရှိ `backendPos` စနစ်အား စစ်ဆေးခဲ့ရာတွင် အောက်ပါ အချက်အလက်များကို တွေ့ရှိရပြီး အောင်မြင်စွာ ဖြေရှင်းတည်ဆောက်ပြီးဖြစ်ပါသည်:
 
-1. **Route Mapping အခြေအနေ**:
-   - `routes/web.php` (Line 52) တွင်:
+1. **Route Mapping အခြေအနေ (Resolved)**:
+   - မူလက Placeholder View (`admin.modules.placeholder`) သာ ချိတ်ဆက်ထားခဲ့ရာမှ ယခုအခါ Dedicated Controller ဖြစ်သော `TaxServiceSettingController` သို့ လွှဲပြောင်းချိတ်ဆက်ပြီးဖြစ်ပါသည်:
      ```php
-     Route::get('/settings/tax', [AdminModuleController::class, 'show'])->defaults('module', 'tax-settings')->name('settings.tax');
+     Route::get('/settings/tax', [TaxServiceSettingController::class, 'edit'])->name('settings.tax');
+     Route::post('/settings/tax', [TaxServiceSettingController::class, 'update'])->name('settings.tax.update');
+     Route::get('/settings/tax/data', [TaxServiceSettingController::class, 'apiData'])->name('settings.tax.data');
+     Route::post('/settings/tax/simulate', [TaxServiceSettingController::class, 'simulate'])->name('settings.tax.simulate');
      ```
-   - လက်ရှိတွင် `AdminModuleController` ၏ Placeholder View (`admin.modules.placeholder`) ကိုသာ ချိတ်ဆက်ထားပြီး အမှန်တကယ် ပြင်ဆင်သိမ်းဆည်းနိုင်သော UI သို့မဟုတ် POST/PUT Handler များ မရှိသေးပါ။
-2. **Database Schema အခြေအနေ (`restaurants` Table)**:
-   - `database/migrations/2026_09_29_000001_enhance_restaurant_settings_table.php` တွင် အခြေခံ အခွန်ကော်လံ အနည်းငယ်သာ ပါရှိပါသည်:
-     - `tax_id` (အခွန်မှတ်ပုံတင်အမှတ်)
-     - `show_tax_id_on_receipt` (ပြေစာပေါ်တွင် Tax ID ပြသရန်)
-     - `default_tax_percent` (Default: 5.00)
-     - `default_service_charge_percent` (Default: 5.00)
-3. **ချို့ယွင်းနေသော မရှိမဖြစ် စားသောက်ဆိုင် အခွန်ဆိုင်ရာ စွမ်းဆောင်ရည်များ (Missing Critical Requirements)**:
-   - **အခွန်တွက်ချက်မှု ပုံစံ (Tax Calculation Modes)**: မီနူးစျေးနှုန်းထဲတွင် အခွန်ပါပြီးဖြစ်သော **Inclusive Model (စျေးနှုန်းထဲ အခွန် ၅% ပါပြီး)** သို့မဟုတ် စုစုပေါင်းအပေါ် ထပ်ပေါင်းတွက်သော **Exclusive Model (Add-on Subtotal + 5%)** ရွေးချယ်နိုင်သော ဆက်တင် မရှိသေးပါ။
-   - **ဝန်ဆောင်ခအပေါ် အခွန်ထပ်စည်းကြပ်မှု (Tax on Service Charge Rule)**: ကုန်သွယ်လုပ်ငန်းခွန်ကို မူလဘေလ်တန်ဖိုး အပေါ်တွင်သာ ကောက်ခံမည်လား၊ သို့မဟုတ် ဝန်ဆောင်ခ ၁၀% အပါအဝင် အားလုံးပေါင်းပေါ်တွင် ကောက်ခံမည်လား (Compounded Tax) ဟူသော ရွေးချယ်မှု မရှိသေးပါ။
-   - **Service Channels ခွဲခြားမှု**: ထိုင်စား (Dine-in) သာ ဝန်ဆောင်ခ ကောက်ခံပြီး ပါဆယ် (Takeaway/Delivery) အတွက် ဝန်ဆောင်ခ ကင်းလွတ်ခွင့် ပေးနိုင်သော Toggle မရှိသေးပါ။
-   - **မြန်မာကျပ်ငွေ Rounding စည်းမျဉ်း (MMK Cash Denomination Rounding)**: မြန်မာနိုင်ငံ စားသောက်ဆိုင်များတွင် ငွေအကြွေ ၁၀/၂၀ ကျပ် ရှားပါးသဖြင့် ငွေရှင်းရာတွင် အနီးစပ်ဆုံး ၅၀ ကျပ် သို့မဟုတ် ၁၀၀ ကျပ်သို့ ညှိနှိုင်းဖြတ်တောက်တွက်ချက်ပေးသော Rounding System မရှိသေးပါ။
-   - **အဆင့်မြင့် အပူခံပြေစာ အခွန်စည်းကမ်း (80mm/58mm Thermal Receipt Compliance)**: ပြေစာပေါ်တွင် အခွန်ငွေပမာဏ၊ ဝန်ဆောင်ခပမာဏ၊ အခွန်ဦးစီးဌာန တံဆိပ်ခေါင်း / QR တံဆိပ်သီးသန့် ပြသမည့် Toggle များ မစုံလင်သေးပါ။
-   - **အချိန်နှင့်တပြေးညီ တွက်ချက်ပြသမှု (Live Dynamic Bill Simulator)**: ဆိုင်ရှင်က အခွန် % သို့မဟုတ် ဝန်ဆောင်ခ % ပြောင်းလိုက်သည်နှင့် ဧည့်သည်၏ ဘေလ်ပြေစာတွင် မည်သို့ တွက်ချက်သွားမည်ကို မျက်မြင်ကိုယ်တွေ့ စမ်းသပ်ကြည့်ရှုနိုင်သော Live Previewer မရှိသေးပါ။
+2. **Database Schema အခြေအနေ (Enhanced)**:
+   - `database/migrations/2026_10_17_000001_enhance_tax_and_service_charge_settings.php` ဖြင့် `restaurants` table တွင် အခွန်နှင့် ဝန်ဆောင်ခ ဆက်တင်များ အားလုံး စုံလင်စွာ ထည့်သွင်းပြီးဖြစ်ပါသည်။
+3. **ဖြေရှင်းပြီးစီးသော စားသောက်ဆိုင် အခွန်ဆိုင်ရာ စွမ်းဆောင်ရည်များ (Fully Implemented Features)**:
+   - **အခွန်တွက်ချက်မှု ပုံစံ**: Inclusive Model (စျေးနှုန်းထဲ အခွန် ၅% ပါပြီး) နှင့် Exclusive Model (Add-on Subtotal + 5%) ကို စိတ်ကြိုက်ရွေးချယ်နိုင်ခြင်း။
+   - **ဝန်ဆောင်ခအပေါ် အခွန်ထပ်စည်းကြပ်မှု**: Compounded Tax စည်းမျဉ်းကို Toggle ဖြင့် ထိန်းချုပ်နိုင်ခြင်း။
+   - **Service Channels ခွဲခြားမှု**: ထိုင်စား (Dine-in) သာ ၁၀% ဝန်ဆောင်ခ ကောက်ခံပြီး ပါဆယ် (Takeaway/Delivery) အတွက် ဝန်ဆောင်ခ အလိုအလျောက် ပယ်ဖျက်ပေးခြင်း (Packaging fee သီးသန့်ကောက်ခံခြင်း)။
+   - **မြန်မာကျပ်ငွေ Rounding စည်းမျဉ်း (Rule 6)**: ငွေသားရှင်းချိန်တွင် အနီးစပ်ဆုံး ၅၀ ကျပ် သို့မဟုတ် ၁၀၀ ကျပ်သို့ အလိုအလျောက် Rounding ပြုလုပ်ပေးခြင်း။
+   - **၈၀ မီလီမီတာ အပူခံပြေစာစလစ် အခွန်စည်းကမ်း**: အခွန်ငွေ၊ ဝန်ဆောင်ခ၊ IRD တရားဝင် တံဆိပ်ခေါင်း / QR Seal တို့ကို စလစ်ပေါ်တွင် ထည့်သွင်းရိုက်နှိပ်ခြင်း။
+   - **အချိန်နှင့်တပြေးညီ တွက်ချက်ပြသမှု (Live Dynamic Bill Simulator)**: ညာဘက်ခြမ်းတွင် Input တန်ဖိုးများ ပြောင်းသည်နှင့် မည်သည့် Page Refresh မှ မလိုဘဲ ချက်ချင်း Live Preview တွက်ချက်ပြသနိုင်ခြင်း။
 
 ---
 

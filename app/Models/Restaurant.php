@@ -72,6 +72,37 @@ class Restaurant extends Model
     ];
 
     /**
+     * The model's default attribute values.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'currency' => 'MMK',
+        'currency_symbol' => 'Ks ',
+        'default_tax_percent' => 5.00,
+        'default_service_charge_percent' => 10.00,
+        'is_tax_enabled' => true,
+        'tax_name' => 'Commercial Tax',
+        'tax_calculation_mode' => 'inclusive',
+        'apply_tax_dine_in' => true,
+        'apply_tax_takeaway' => true,
+        'apply_tax_delivery' => true,
+        'apply_tax_qr_order' => true,
+        'is_service_charge_enabled' => true,
+        'service_charge_name' => 'Service Charge',
+        'service_charge_dine_in_only' => true,
+        'is_service_charge_taxable' => false,
+        'takeaway_packaging_fee' => 0,
+        'rounding_method' => 'round_50',
+        'rounding_direction' => 'nearest',
+        'round_cash_only' => true,
+        'show_tax_breakdown_on_receipt' => true,
+        'show_service_charge_on_receipt' => true,
+        'print_tax_stamp_seal' => true,
+        'is_active' => true,
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

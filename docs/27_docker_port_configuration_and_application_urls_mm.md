@@ -20,7 +20,7 @@ Local ကွန်ပျူတာပေါ်တွင် အခြား Docker
 | :--- | :--- | :--- | :--- | :--- |
 | **`pos-backend-web` (Nginx)** | `8000` | **`8085`** | `80` | အခြား Project ၏ port 8000 နှင့် မငြိဘဲ Web Browser မှ တိုက်ရိုက် access လုပ်နိုင်ရန် |
 | **`pos-backend-redis` (Redis)** | `6379` | **`6380`** | `6379` | Redis Host port conflict ကို ရှောင်ရှားရန် (Container အချင်းချင်း ဆက်သွယ်မှုမှာ docker network မှတစ်ဆင့် ချိတ်ဆက်သဖြင့် ထိခိုက်မှုမရှိပါ) |
-| **`pos-backend-db` (MySQL)** | `3306` | `3306` | `3306` | လက်ရှိ Port 3306 တွင် conflict မရှိသဖြင့် မူလအတိုင်း ဆက်လက်အသုံးပြုသည် |
+| **`pos-backend-db` (MySQL)** | `3306` | **`3307`** | `3306` | Host ပေါ်ရှိ အခြား MySQL (Port 3306) နှင့် မငြိစေရန် Port 3307 သို့ သတ်မှတ်ထားသည် |
 | **`pos-backend-app` (PHP-FPM)**| - | - | `9000` | Nginx မှ FastCGI ဖြင့် စီမံခန့်ခွဲသည် |
 
 ---

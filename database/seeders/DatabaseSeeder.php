@@ -28,6 +28,18 @@ class DatabaseSeeder extends Seeder
                 'phone' => '+959123456789',
                 'email' => 'contact@rangoonspice.com',
                 'address' => 'No. 123, Merchant Road, Yangon',
+                'tax_id' => 'TIN-482910-YGN',
+                'tax_name' => 'Commercial Tax',
+                'default_tax_percent' => 5.00,
+                'tax_calculation_mode' => 'inclusive',
+                'default_service_charge_percent' => 10.00,
+                'is_service_charge_enabled' => true,
+                'service_charge_name' => 'Service Charge',
+                'service_charge_dine_in_only' => true,
+                'takeaway_packaging_fee' => 500,
+                'rounding_method' => 'round_50',
+                'rounding_direction' => 'nearest',
+                'round_cash_only' => true,
                 'is_active' => true,
             ]
         );
