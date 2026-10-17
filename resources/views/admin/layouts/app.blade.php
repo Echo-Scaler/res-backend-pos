@@ -900,6 +900,37 @@
         .modern-pagination-list .page-arrow {
             font-size: 0.95rem;
         }
+
+        /* SPA Page Transition & Instant Navigation Styles */
+        #spa-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #9ec63b, #7ea826, #b5e048);
+            box-shadow: 0 0 12px rgba(158, 198, 59, 0.85);
+            z-index: 999999;
+            transition: width 0.2s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.25s ease;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .content {
+            transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .content-transitioning {
+            opacity: 0.35;
+            transform: translateY(3px);
+            pointer-events: none;
+        }
+        .content-enter {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+        .content-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
     @stack('styles')
 </head>
@@ -1253,7 +1284,7 @@
 
         <!-- Main Content Area -->
         <div class="page-wrapper">
-            <main class="content">
+            <main class="content" id="app-main-content">
                 @if (session('status'))
                     <div class="alert alert-success">
                         <i class="ti ti-circle-check fs-5"></i>
@@ -1421,6 +1452,198 @@
                 setTheme(current === 'dark' ? 'light' : 'dark');
             });
         }
+    </script>
+
+    <!-- Instant SPA Page Transition & Pre-fetching Engine -->
+    <script data-permanent="true">
+        (function() {
+            const mainContent = document.getElementById('app-main-content') || document.querySelector('main.content');
+            if (!mainContent) return;
+
+            // Top Progress Bar
+            let progressBar = document.getElementById('spa-progress-bar');
+            if (!progressBar) {
+                progressBar = document.createElement('div');
+                progressBar.id = 'spa-progress-bar';
+                document.body.prepend(progressBar);
+            }
+
+            const pageCache = new Map();
+            let currentAbort = null;
+
+            function startProgress() {
+                progressBar.style.opacity = '1';
+                progressBar.style.width = '30%';
+                setTimeout(() => { if (progressBar.style.opacity === '1') progressBar.style.width = '75%'; }, 100);
+            }
+
+            function endProgress() {
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.opacity = '0';
+                    setTimeout(() => { progressBar.style.width = '0%'; }, 250);
+                }, 150);
+            }
+
+            function updateSidebarActive(targetUrl) {
+                try {
+                    const targetPath = new URL(targetUrl, window.location.origin).pathname;
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        try {
+                            const linkPath = new URL(link.href, window.location.origin).pathname;
+                            if (linkPath === targetPath) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        } catch(e) {}
+                    });
+                } catch(e) {}
+            }
+
+            function executeScripts(container) {
+                const scripts = Array.from(container.querySelectorAll('script'));
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            }
+
+            async function navigateTo(url, push = true) {
+                if (currentAbort) currentAbort.abort();
+                currentAbort = new AbortController();
+
+                startProgress();
+                mainContent.classList.add('content-transitioning');
+
+                try {
+                    let html = pageCache.get(url);
+                    if (!html) {
+                        const res = await fetch(url, {
+                            signal: currentAbort.signal,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        if (!res.ok) {
+                            window.location.href = url;
+                            return;
+                        }
+                        html = await res.text();
+                        pageCache.set(url, html);
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newMain = doc.getElementById('app-main-content') || doc.querySelector('main.content');
+
+                    if (!newMain) {
+                        window.location.href = url;
+                        return;
+                    }
+
+                    // Update document title
+                    if (doc.title) {
+                        document.title = doc.title;
+                    }
+
+                    // Replace main content seamlessly
+                    mainContent.innerHTML = newMain.innerHTML;
+                    mainContent.classList.remove('content-transitioning');
+                    mainContent.classList.add('content-enter');
+
+                    // Execute page-specific scripts in main content
+                    executeScripts(mainContent);
+
+                    // Re-run extra scripts from new page body
+                    const extraScripts = Array.from(doc.querySelectorAll('body > script:not([data-permanent])'));
+                    extraScripts.forEach(s => {
+                        const ns = document.createElement('script');
+                        Array.from(s.attributes).forEach(attr => ns.setAttribute(attr.name, attr.value));
+                        ns.appendChild(document.createTextNode(s.innerHTML));
+                        document.body.appendChild(ns);
+                    });
+
+                    // Update sidebar active link
+                    updateSidebarActive(url);
+
+                    // Update URL bar without reload
+                    if (push) {
+                        window.history.pushState({ url }, '', url);
+                    }
+
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+
+                    requestAnimationFrame(() => {
+                        mainContent.classList.remove('content-enter');
+                        mainContent.classList.add('content-enter-active');
+                        setTimeout(() => {
+                            mainContent.classList.remove('content-enter-active');
+                        }, 220);
+                    });
+
+                    endProgress();
+                    document.dispatchEvent(new CustomEvent('spa:page-loaded', { detail: { url } }));
+                } catch (err) {
+                    if (err.name === 'AbortError') return;
+                    console.warn('SPA Navigation fallback:', err);
+                    window.location.href = url;
+                }
+            }
+
+            // Hover prefetch for instantaneous 0ms navigation
+            function prefetch(url) {
+                if (!url || pageCache.has(url)) return;
+                try {
+                    const u = new URL(url, window.location.origin);
+                    if (u.origin !== window.location.origin) return;
+                    if (u.pathname.includes('/logout')) return;
+                    fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                        .then(r => r.ok ? r.text() : null)
+                        .then(h => { if (h) pageCache.set(url, h); })
+                        .catch(() => {});
+                } catch(e) {}
+            }
+
+            // Intercept link clicks
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:')) return;
+                if (link.target === '_blank' || link.hasAttribute('download') || link.getAttribute('data-no-pjax') !== null) return;
+
+                try {
+                    const targetUrl = new URL(link.href, window.location.origin);
+                    if (targetUrl.origin !== window.location.origin) return;
+                    if (targetUrl.pathname.includes('/logout')) return;
+
+                    // Same page click
+                    if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    e.preventDefault();
+                    navigateTo(link.href, true);
+                } catch(err) {}
+            });
+
+            // Hover listener for ultra-fast prefetching
+            document.addEventListener('mouseover', function(e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || link.target === '_blank') return;
+                prefetch(link.href);
+            });
+
+            // Back/Forward browser history support
+            window.addEventListener('popstate', function() {
+                navigateTo(window.location.href, false);
+            });
+        })();
     </script>
     @stack('scripts')
 </body>
