@@ -9,13 +9,13 @@
     <!-- Google Font: Mada -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mada:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mada:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" data-permanent="true">
     
     <!-- Tabler Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" data-permanent="true">
     
     <!-- ApexCharts -->
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" data-permanent="true"></script>
 
     <style id="base-app-styles">
         :root {
@@ -1471,6 +1471,9 @@
             const pageCache = new Map();
             let currentAbort = null;
 
+            // Tag initial page-specific styles so they can be cleaned up on first navigation
+            document.querySelectorAll('head style:not(#base-app-styles)').forEach(s => s.setAttribute('data-page-style', 'true'));
+
             function startProgress() {
                 progressBar.style.opacity = '1';
                 progressBar.style.width = '30%';
@@ -1547,9 +1550,9 @@
                         document.title = doc.title;
                     }
 
-                    // Swap page-specific styles from fetched <head> so all pages render with 100% styled UI
+                    // Swap page-specific styles from fetched document so all pages render with 100% styled UI
                     document.querySelectorAll('head style[data-page-style], head link[data-page-style]').forEach(el => el.remove());
-                    const fetchedStyles = Array.from(doc.querySelectorAll('head style:not(#base-app-styles)'));
+                    const fetchedStyles = Array.from(doc.querySelectorAll('style:not(#base-app-styles)'));
                     fetchedStyles.forEach(style => {
                         const newStyle = document.createElement('style');
                         newStyle.setAttribute('data-page-style', 'true');
