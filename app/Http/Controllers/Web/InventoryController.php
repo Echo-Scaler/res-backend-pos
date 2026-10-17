@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Inventory\RestockInventoryItemRequest;
 use App\Http\Requests\Admin\Inventory\StoreInventoryItemRequest;
 use App\Http\Requests\Admin\Inventory\UpdateInventoryItemRequest;
 use App\Http\Resources\InventoryItemResource;
+use App\Models\AuditLog;
 use App\Models\InventoryItem;
+use App\Services\AuditLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -200,5 +203,67 @@ class InventoryController extends Controller
         $inventoryItem->delete();
 
         return redirect()->route('admin.inventory.index')->with('success', "Inventory item '{$itemName}' deleted.");
+    }
+
+    /**
+     * Quick restock or adjust inventory item stock quantity.
+     */
+    public function restock(RestockInventoryItemRequest $request, InventoryItem $inventoryItem): JsonResponse|RedirectResponse
+    {
+        $currentUser = $request->user();
+
+        if ($inventoryItem->restaurant_id !== $currentUser->restaurant_id) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $validated = $request->validated();
+        $oldStock = (float) $inventoryItem->current_stock;
+        $adjustment = (float) $validated['quantity'];
+        $newStock = max(0, $oldStock + $adjustment);
+
+        $updatePayload = [
+            'current_stock' => $newStock,
+        ];
+
+        if (! empty($validated['unit_cost'])) {
+            $updatePayload['unit_cost'] = $validated['unit_cost'];
+        }
+
+        if (! empty($validated['supplier_name'])) {
+            $updatePayload['supplier_name'] = $validated['supplier_name'];
+        }
+
+        $inventoryItem->update($updatePayload);
+
+        // Audit Trail
+        AuditLogService::log(
+            action: 'INVENTORY_STOCK_ADJUSTED',
+            category: AuditLog::CATEGORY_GENERAL,
+            severity: AuditLog::SEVERITY_INFO,
+            resource: $inventoryItem,
+            oldValue: ['current_stock' => $oldStock],
+            newValue: ['current_stock' => $newStock, 'adjustment' => $adjustment],
+            metadata: [
+                'item_name' => $inventoryItem->name,
+                'unit' => $inventoryItem->unit,
+                'reason' => $validated['reason'] ?? 'Manual Stock Adjustment',
+                'currency' => 'MMK',
+            ],
+            user: $currentUser,
+            restaurantId: $currentUser->restaurant_id,
+        );
+
+        $actionType = $adjustment > 0 ? 'Restocked (+'.number_format($adjustment, 2).')' : 'Deducted ('.number_format($adjustment, 2).')';
+        $message = "Stock for '{$inventoryItem->name}' successfully adjusted: {$actionType} {$inventoryItem->unit}. Current Stock: ".number_format($newStock, 2)." {$inventoryItem->unit}.";
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'item' => new InventoryItemResource($inventoryItem),
+            ]);
+        }
+
+        return redirect()->route('admin.inventory.index')->with('success', $message);
     }
 }

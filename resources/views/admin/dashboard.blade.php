@@ -2043,11 +2043,6 @@
         <span class="module-desc">Loyalty points, member tiers & dining history.</span>
     </a>
 
-    <a href="{{ route('admin.promotions.index') }}" class="module-card">
-        <div class="module-icon-box" style="background: var(--warning-light); color: var(--warning);"><i class="ti ti-discount-2"></i></div>
-        <span class="module-title">Discounts & Promos</span>
-        <span class="module-desc">Happy hour discounts, coupons & vouchers.</span>
-    </a>
 
     <a href="{{ route('admin.reports.index') }}" class="module-card">
         <div class="module-icon-box" style="background: var(--info-light); color: var(--info);"><i class="ti ti-chart-bar"></i></div>

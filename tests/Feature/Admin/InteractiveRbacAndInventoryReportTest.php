@@ -180,4 +180,55 @@ class InteractiveRbacAndInventoryReportTest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue(str_contains((string) $response->headers->get('content-type'), 'text/csv'));
     }
+
+    public function test_owner_and_manager_can_quick_restock_inventory_item(): void
+    {
+        $item = InventoryItem::create([
+            'restaurant_id' => $this->restaurant->id,
+            'name' => 'Chicken Breast',
+            'unit' => 'kg',
+            'current_stock' => 10.0,
+            'min_stock_alert' => 15.0,
+            'unit_cost' => 6000,
+        ]);
+
+        $response = $this->actingAs($this->manager)->post(route('admin.inventory.restock', $item->id), [
+            'quantity' => 15.0,
+            'unit_cost' => 6200,
+            'supplier_name' => 'Shwe Taung Wholesale',
+            'reason' => 'Morning Fresh Market Delivery',
+        ]);
+
+        $response->assertRedirect(route('admin.inventory.index'));
+        $item->refresh();
+        $this->assertEquals(25.0, $item->current_stock);
+        $this->assertEquals(6200, $item->unit_cost);
+        $this->assertEquals('Shwe Taung Wholesale', $item->supplier_name);
+    }
+
+    public function test_owner_can_update_inventory_item(): void
+    {
+        $item = InventoryItem::create([
+            'restaurant_id' => $this->restaurant->id,
+            'name' => 'Old Item',
+            'unit' => 'kg',
+            'current_stock' => 5.0,
+            'min_stock_alert' => 10.0,
+            'unit_cost' => 2000,
+        ]);
+
+        $response = $this->actingAs($this->owner)->put(route('admin.inventory.update', $item->id), [
+            'name' => 'Updated Premium Rice',
+            'unit' => 'viss',
+            'current_stock' => 20.0,
+            'min_stock_alert' => 5.0,
+            'unit_cost' => 5500,
+        ]);
+
+        $response->assertRedirect(route('admin.inventory.index'));
+        $item->refresh();
+        $this->assertEquals('Updated Premium Rice', $item->name);
+        $this->assertEquals('viss', $item->unit);
+        $this->assertEquals(20.0, $item->current_stock);
+    }
 }

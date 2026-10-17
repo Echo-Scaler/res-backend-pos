@@ -113,7 +113,6 @@ class OwnerDashboardAnalyticsTest extends TestCase
             'admin.orders.index',
             'admin.payments.index',
             'admin.customers.index',
-            'admin.promotions.index',
             'admin.reports.index',
             'admin.expenses.index',
             'admin.settings.tax',

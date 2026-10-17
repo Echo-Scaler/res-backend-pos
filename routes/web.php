@@ -14,7 +14,6 @@ use App\Http\Controllers\Web\ExpenseController;
 use App\Http\Controllers\Web\InventoryController;
 use App\Http\Controllers\Web\MenuController;
 use App\Http\Controllers\Web\OrderVerificationController;
-use App\Http\Controllers\Web\PromotionController;
 use App\Http\Controllers\Web\ReportController;
 use App\Http\Controllers\Web\RestaurantSettingsController;
 use App\Http\Controllers\Web\RoleDashboardController;
@@ -114,14 +113,8 @@ Route::middleware(['auth', 'role:OWNER|MANAGER'])->prefix('admin')->name('admin.
     Route::get('/inventory/report', [InventoryController::class, 'report'])->name('inventory.report');
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
     Route::put('/inventory/{inventoryItem}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::post('/inventory/{inventoryItem}/restock', [InventoryController::class, 'restock'])->name('inventory.restock');
     Route::delete('/inventory/{inventoryItem}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
-
-    // Promotions & Coupons
-    Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
-    Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
-    Route::put('/promotions/{promotion}', [PromotionController::class, 'update'])->name('promotions.update');
-    Route::post('/promotions/{promotion}/toggle', [PromotionController::class, 'toggleActive'])->name('promotions.toggle');
-    Route::delete('/promotions/{promotion}', [PromotionController::class, 'destroy'])->name('promotions.destroy');
 
     // Dining Tables & Dynamic QR Code Management (Saizeriya Floor Operations)
     Route::get('/tables', [DiningTableController::class, 'index'])->name('tables.index');
