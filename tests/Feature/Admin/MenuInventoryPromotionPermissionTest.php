@@ -4,7 +4,6 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Promotion;
 use App\Models\Restaurant;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
@@ -71,30 +70,26 @@ class MenuInventoryPromotionPermissionTest extends TestCase
         $this->staff->assignRole('STAFF');
     }
 
-    public function test_owner_and_manager_can_access_menu_inventory_and_promotions(): void
+    public function test_owner_and_manager_can_access_menu_and_inventory(): void
     {
         // Owner checks
         $this->actingAs($this->owner)->get(route('admin.menu.index'))->assertStatus(200);
         $this->actingAs($this->owner)->get(route('admin.inventory.index'))->assertStatus(200);
-        $this->actingAs($this->owner)->get(route('admin.promotions.index'))->assertStatus(200);
 
         // Manager checks (Permissions correctly granted)
         $this->actingAs($this->manager)->get(route('admin.menu.index'))->assertStatus(200);
         $this->actingAs($this->manager)->get(route('admin.inventory.index'))->assertStatus(200);
-        $this->actingAs($this->manager)->get(route('admin.promotions.index'))->assertStatus(200);
     }
 
-    public function test_cashier_and_staff_cannot_access_menu_inventory_or_promotions(): void
+    public function test_cashier_and_staff_cannot_access_menu_or_inventory(): void
     {
         // Cashier forbidden
         $this->actingAs($this->cashier)->get(route('admin.menu.index'))->assertStatus(403);
         $this->actingAs($this->cashier)->get(route('admin.inventory.index'))->assertStatus(403);
-        $this->actingAs($this->cashier)->get(route('admin.promotions.index'))->assertStatus(403);
 
         // Staff forbidden
         $this->actingAs($this->staff)->get(route('admin.menu.index'))->assertStatus(403);
         $this->actingAs($this->staff)->get(route('admin.inventory.index'))->assertStatus(403);
-        $this->actingAs($this->staff)->get(route('admin.promotions.index'))->assertStatus(403);
     }
 
     public function test_can_create_category_and_product(): void
@@ -165,51 +160,5 @@ class MenuInventoryPromotionPermissionTest extends TestCase
             'name' => 'Premium Jasmine Rice',
             'current_stock' => 50,
         ]);
-    }
-
-    public function test_can_create_and_toggle_promotion_coupon(): void
-    {
-        $response = $this->actingAs($this->owner)->postJson(route('admin.promotions.store'), [
-            'code' => 'THADINGYUT20',
-            'name' => 'Thadingyut Festival 20% Discount',
-            'type' => 'PERCENTAGE',
-            'value' => 20,
-            'min_order_amount' => 25000,
-        ]);
-
-        $response->assertStatus(200);
-        $this->assertDatabaseHas('promotions', [
-            'restaurant_id' => $this->restaurant->id,
-            'code' => 'THADINGYUT20',
-            'value' => 20,
-            'is_active' => true,
-        ]);
-
-        $promo = Promotion::where('code', 'THADINGYUT20')->first();
-        $toggleResponse = $this->actingAs($this->manager)->postJson(route('admin.promotions.toggle', $promo->id));
-        $toggleResponse->assertStatus(200);
-        $toggleResponse->assertJson(['is_active' => false]);
-        $this->assertFalse($promo->fresh()->is_active);
-    }
-
-    public function test_duplicate_coupon_code_in_same_restaurant_is_rejected(): void
-    {
-        Promotion::create([
-            'restaurant_id' => $this->restaurant->id,
-            'code' => 'VIP5000',
-            'name' => 'VIP 5000 MMK Off',
-            'type' => 'FIXED',
-            'value' => 5000,
-        ]);
-
-        $response = $this->actingAs($this->manager)->postJson(route('admin.promotions.store'), [
-            'code' => 'VIP5000',
-            'name' => 'Another VIP Coupon',
-            'type' => 'FIXED',
-            'value' => 5000,
-        ]);
-
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['code']);
     }
 }

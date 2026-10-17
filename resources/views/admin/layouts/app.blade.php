@@ -1183,14 +1183,6 @@
                         </div>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.promotions.index') }}" class="sidebar-link {{ request()->routeIs('admin.promotions.index') ? 'active' : '' }}">
-                        <div class="sidebar-link-content">
-                            <i class="ti ti-discount-2"></i>
-                            <span>Discounts & Promos</span>
-                        </div>
-                    </a>
-                </li>
             </ul>
 
             <div class="sidebar-section-title">Kitchen & Stock</div>
